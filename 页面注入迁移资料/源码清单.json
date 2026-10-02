@@ -1,0 +1,395 @@
+{
+  "exportedAt": "2026-10-02T07:08:19.255Z",
+  "sourceRoot": "D:\\云监控\\app",
+  "snapshotRoot": "C:\\Users\\20136\\Documents\\ChatGPT\\云监控\\页面注入迁移资料\\源码快照",
+  "notes": "静态源码快照；没有导出运行数据。宿主参考文件含原软件其他功能，目标软件只迁移本手册范围。",
+  "files": [
+    {
+      "path": "src/main/integration/pddAdapter.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddAdapter.ts",
+      "bytes": 30833,
+      "lines": 874,
+      "sha256": "31ec6666a1b8ee9555b90b138e9d3e1707096de508cfcf850542c5bf06566366",
+      "sourceMtime": "2026-09-26T05:28:41.575Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddGuestSender.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddGuestSender.ts",
+      "bytes": 4744,
+      "lines": 107,
+      "sha256": "6b0bcad8fcc9af270641d7d43c27df9c8169499c42cf3a9207ccea9e9751ee3c",
+      "sourceMtime": "2026-09-23T16:52:16.051Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddTitanDecoder.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddTitanDecoder.ts",
+      "bytes": 8810,
+      "lines": 280,
+      "sha256": "049c1b436ca3ff4289314ce528c09feb8632a0616d2259ac905e9cb9600b5fa6",
+      "sourceMtime": "2026-09-25T17:35:04.857Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddChromeBridge.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddChromeBridge.ts",
+      "bytes": 17410,
+      "lines": 504,
+      "sha256": "33f051296f66e35a49bf7f246367699ffb932943aeef312e1670f1b5baf0c504",
+      "sourceMtime": "2026-09-23T16:55:06.412Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddOrderProbe.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddOrderProbe.ts",
+      "bytes": 4917,
+      "lines": 106,
+      "sha256": "4575ece16bcce9917623906563634d88be6e0af669f42b6163d473f3850c3f8a",
+      "sourceMtime": "2026-09-26T05:31:44.958Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/douyinAdapter.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinAdapter.ts",
+      "bytes": 15654,
+      "lines": 426,
+      "sha256": "c6b239e1aacbb6e0f1eacf6ff38824840c0a067a56cb8f6cc5cadc282841c058",
+      "sourceMtime": "2026-09-25T16:49:51.676Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/douyinPageBridge.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinPageBridge.ts",
+      "bytes": 9301,
+      "lines": 178,
+      "sha256": "350e93298eada3f4ddca3b13d47343dc86e5ea081d79b7ec8df1620fbfb870f6",
+      "sourceMtime": "2026-09-25T16:49:25.048Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/douyinMessage.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinMessage.ts",
+      "bytes": 4240,
+      "lines": 127,
+      "sha256": "9a07e0e2e9cff0a1c549a70f09287339167c0c156ee1fe0f2982b9475647e37c",
+      "sourceMtime": "2026-09-25T17:10:19.665Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/douyinRecoveryState.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinRecoveryState.ts",
+      "bytes": 1598,
+      "lines": 52,
+      "sha256": "ac5675155332e2ff498f75a54a730807acdae4bfb4d309ac7d55badd51cecae0",
+      "sourceMtime": "2026-09-23T05:11:31.455Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddStateStore.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddStateStore.ts",
+      "bytes": 4998,
+      "lines": 163,
+      "sha256": "b6d548af547910c605ed9e57b44289a11a5cff8e32e12bd02f96a3f67381d64f",
+      "sourceMtime": "2026-09-23T17:06:01.922Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddReplyResolver.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddReplyResolver.ts",
+      "bytes": 1427,
+      "lines": 49,
+      "sha256": "dcb0301356ba5bda015ba8deba5c4e1fec4a41e5f47a06432d6c78ca4a4d8912",
+      "sourceMtime": "2026-09-21T15:36:21.169Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/flags.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\flags.ts",
+      "bytes": 306,
+      "lines": 8,
+      "sha256": "9d94bfa2fff19531c6d80bcb6f1c1d6080f4288c98caed7a53b44b1a4229a73a",
+      "sourceMtime": "2026-09-22T20:54:12.282Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/messageSchemaCapture.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\messageSchemaCapture.ts",
+      "bytes": 1810,
+      "lines": 55,
+      "sha256": "9685258ea6d4ffe465c682ebb88a538acd094872236d8940f5959bc60c55ab12",
+      "sourceMtime": "2026-09-25T16:49:51.678Z",
+      "category": "core"
+    },
+    {
+      "path": "resources/injections/yz-pdd-hook.js",
+      "source": "D:\\云监控\\app\\resources\\injections\\yz-pdd-hook.js",
+      "bytes": 8414,
+      "lines": 268,
+      "sha256": "5e420c7a6f44c41173ae4cc9b727b6ace149c6d0e7db24850df17d0b8d5e8362",
+      "sourceMtime": "2026-09-22T08:04:19.736Z",
+      "category": "core"
+    },
+    {
+      "path": "src/shared/contracts.ts",
+      "source": "D:\\云监控\\app\\src\\shared\\contracts.ts",
+      "bytes": 9698,
+      "lines": 387,
+      "sha256": "53156e43266c07b64ea5e580e1a67be6ccd89cafd0fbdb11dc7790b495ee7024",
+      "sourceMtime": "2026-09-26T05:25:14.669Z",
+      "category": "core"
+    },
+    {
+      "path": "src/main/integration/pddAdapter.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddAdapter.test.ts",
+      "bytes": 25299,
+      "lines": 699,
+      "sha256": "315d95c5ced9a495fee809d5b2b158476bd871c11a30ef12058f34311429faeb",
+      "sourceMtime": "2026-09-26T05:25:19.691Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/pddGuestSender.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddGuestSender.test.ts",
+      "bytes": 2747,
+      "lines": 70,
+      "sha256": "eab717245a15ddd8ae394b209cddfb3c6f95122dffcd475d6aa655ea553f0c4a",
+      "sourceMtime": "2026-09-23T16:51:35.146Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/pddTitanDecoder.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddTitanDecoder.test.ts",
+      "bytes": 4896,
+      "lines": 155,
+      "sha256": "4126c65a212da6591d933719e947667a9b76694cbf73306c6c96f1a951d03065",
+      "sourceMtime": "2026-09-25T17:10:43.956Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/pddOrderProbe.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddOrderProbe.test.ts",
+      "bytes": 8054,
+      "lines": 244,
+      "sha256": "c79fc13f6669925cd7f07d628aa860131f2c77227e907b2db39f750fa216cd4e",
+      "sourceMtime": "2026-09-26T05:31:47.619Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/pddStateStore.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddStateStore.test.ts",
+      "bytes": 3906,
+      "lines": 95,
+      "sha256": "932d63676c696d8aa66bcf72604a26b80ed96d7557762bd337e6eca456a29b0a",
+      "sourceMtime": "2026-09-23T17:07:13.317Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/pddReplyResolver.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\pddReplyResolver.test.ts",
+      "bytes": 1485,
+      "lines": 50,
+      "sha256": "29b05edbd4d5f86107d8a68e58eadd7a753ff16f427557ef88a6f25b83abeb87",
+      "sourceMtime": "2026-09-21T15:36:21.181Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/douyinAdapter.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinAdapter.test.ts",
+      "bytes": 3188,
+      "lines": 94,
+      "sha256": "61ffc0ad66d600305ab948341b607e963b6fe25e2119844856924de6f6fe3048",
+      "sourceMtime": "2026-09-23T05:14:57.242Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/douyinPageBridge.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinPageBridge.test.ts",
+      "bytes": 9362,
+      "lines": 324,
+      "sha256": "d23a60f3b585ca0b5be371ff75ebfa6d7fb8b25592a2926b7c65e06676a86fbd",
+      "sourceMtime": "2026-09-25T16:56:14.724Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/douyinMessage.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinMessage.test.ts",
+      "bytes": 4736,
+      "lines": 164,
+      "sha256": "34a267145f83b5a48e6088431f65d01a02feae647f78eaaa9a0a4e0c60d0a1f5",
+      "sourceMtime": "2026-09-25T17:35:05.329Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/douyinRecoveryState.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\douyinRecoveryState.test.ts",
+      "bytes": 1039,
+      "lines": 27,
+      "sha256": "eba51a5809feb309e8de9eba3da793c1536f29d9074b8e15c4cd06907c29dee7",
+      "sourceMtime": "2026-09-23T05:11:31.467Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/messageSchemaCapture.test.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\messageSchemaCapture.test.ts",
+      "bytes": 2069,
+      "lines": 48,
+      "sha256": "98428f81d65d59e0ed5dff288eb42397ca55e815d2ea48c9de427e027fac4b8f",
+      "sourceMtime": "2026-09-25T16:33:03.575Z",
+      "category": "test"
+    },
+    {
+      "path": "src/main/integration/mockAdapter.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\mockAdapter.ts",
+      "bytes": 15028,
+      "lines": 498,
+      "sha256": "f054b22abff7497b45f077d004d5a05526715e35060704de729b81f3ca345ed4",
+      "sourceMtime": "2026-09-23T16:20:12.613Z",
+      "category": "test-fixture"
+    },
+    {
+      "path": "src/main/integration/types.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\types.ts",
+      "bytes": 490,
+      "lines": 18,
+      "sha256": "da68a0b2d889695f0b91b1bb298e2b1d8b6b8e68d2399c409dd1e8b4002fb853",
+      "sourceMtime": "2026-09-21T07:25:49.187Z",
+      "category": "test-fixture"
+    },
+    {
+      "path": "src/main/integration/redaction.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\redaction.ts",
+      "bytes": 741,
+      "lines": 23,
+      "sha256": "f18c74e0e9a3c4650bde86a913bcd7d0da465e9a8aef554fecd10a1b9918fc79",
+      "sourceMtime": "2026-09-21T07:25:49.175Z",
+      "category": "test-fixture"
+    },
+    {
+      "path": "src/main/index.ts",
+      "source": "D:\\云监控\\app\\src\\main\\index.ts",
+      "bytes": 8467,
+      "lines": 240,
+      "sha256": "a1778baff5b04cf52d7f74adb76b519f1bdce0d2483a5b0d834d5e6de3549ff0",
+      "sourceMtime": "2026-09-24T17:32:33.412Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "src/main/ipc.ts",
+      "source": "D:\\云监控\\app\\src\\main\\ipc.ts",
+      "bytes": 6857,
+      "lines": 187,
+      "sha256": "abe81b1f21c0232d635e3b121473e7a3a4f0c54d3152d0ef539c50f8d40182a6",
+      "sourceMtime": "2026-09-26T05:12:11.697Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "src/preload/index.ts",
+      "source": "D:\\云监控\\app\\src\\preload\\index.ts",
+      "bytes": 3047,
+      "lines": 47,
+      "sha256": "43d166b8de64e145057b9879d347a5d81aa07a61027aaf058981885cb3063926",
+      "sourceMtime": "2026-09-26T05:12:14.235Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "src/main/integration/registry.ts",
+      "source": "D:\\云监控\\app\\src\\main\\integration\\registry.ts",
+      "bytes": 2458,
+      "lines": 70,
+      "sha256": "153bb808f5d8cdbf46470bf50567aa57808024a9f6a9a471716eb9a9efcd7e2b",
+      "sourceMtime": "2026-09-23T16:18:19.303Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "src/renderer/src/components/PlatformViewport.vue",
+      "source": "D:\\云监控\\app\\src\\renderer\\src\\components\\PlatformViewport.vue",
+      "bytes": 11261,
+      "lines": 297,
+      "sha256": "0603edeafb14ff9d95fd4ef7041677c446136cf634dc209aafa021770fbab24a",
+      "sourceMtime": "2026-09-26T07:05:46.707Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "src/renderer/src/components/DouyinViewport.vue",
+      "source": "D:\\云监控\\app\\src\\renderer\\src\\components\\DouyinViewport.vue",
+      "bytes": 4472,
+      "lines": 118,
+      "sha256": "9b3387fd3e2139c0f489ea84564eb9d9a88820ffe0df290ec63bc84785c742bc",
+      "sourceMtime": "2026-09-23T04:06:29.979Z",
+      "category": "host-reference"
+    },
+    {
+      "path": "package.json",
+      "source": "D:\\云监控\\app\\package.json",
+      "bytes": 1956,
+      "lines": 58,
+      "sha256": "1d210a77ef9408acf5f5e85920c9d8564333b511c8318978ca3d5cddf2bfaea4",
+      "sourceMtime": "2026-09-21T17:00:41.804Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "source": "D:\\云监控\\app\\pnpm-lock.yaml",
+      "bytes": 191599,
+      "lines": 5750,
+      "sha256": "c889b5ad2a9eb11d1a326a14a26e4c746ee37dd402305c703d43bc5ea29a42b2",
+      "sourceMtime": "2026-09-21T17:00:28.539Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "electron.vite.config.ts",
+      "source": "D:\\云监控\\app\\electron.vite.config.ts",
+      "bytes": 711,
+      "lines": 39,
+      "sha256": "90ac396ad8684b4a7d9d5cb593258678f292c54ffbb17787f94b6875e89196d4",
+      "sourceMtime": "2026-09-21T13:15:50.808Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "electron-builder.yml",
+      "source": "D:\\云监控\\app\\electron-builder.yml",
+      "bytes": 1455,
+      "lines": 49,
+      "sha256": "3d85d355f1640a01fe4375433ef4101c55b521ce318cdddb8cc42ab82a088eb8",
+      "sourceMtime": "2026-09-23T09:23:14.624Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "tsconfig.json",
+      "source": "D:\\云监控\\app\\tsconfig.json",
+      "bytes": 107,
+      "lines": 5,
+      "sha256": "3983835feac8cd22927398f66367953cbe99d53ef5a27a33fe35267f62560a8c",
+      "sourceMtime": "2026-09-21T07:00:17.696Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "source": "D:\\云监控\\app\\tsconfig.node.json",
+      "bytes": 360,
+      "lines": 14,
+      "sha256": "6189074d3d5029d12552f31dc76398638f0ee93209a759b32b35e5c9a28235a9",
+      "sourceMtime": "2026-09-21T07:04:52.198Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "tsconfig.web.json",
+      "source": "D:\\云监控\\app\\tsconfig.web.json",
+      "bytes": 432,
+      "lines": 23,
+      "sha256": "748355ffc838477890af610bab21844a0bfb99b8d948697ef59af14e84ef92c2",
+      "sourceMtime": "2026-09-21T07:04:54.272Z",
+      "category": "config-reference"
+    },
+    {
+      "path": "vitest.config.ts",
+      "source": "D:\\云监控\\app\\vitest.config.ts",
+      "bytes": 450,
+      "lines": 19,
+      "sha256": "e7b2a801bc7991bf066f241f7086afa4daf7d37d87687051be57abefe7ab7fa6",
+      "sourceMtime": "2026-09-21T07:41:51.027Z",
+      "category": "config-reference"
+    }
+  ]
+}
