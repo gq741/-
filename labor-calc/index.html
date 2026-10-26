@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>离职赔偿金N+1与加班费仲裁计算器 · 图灵320</title>
+<style>
+:root{--bg-page:#F8F9FA;--bg-surface:#FFFFFF;--bg-subtle:#FAFAFA;--bg-muted:#F4F4F5;--border:#E4E4E7;--border-strong:#D4D4D8;--text-primary:#18181B;--text-secondary:#52525B;--text-muted:#71717A;--text-faint:#A1A1AA;--green:#15803D;--green-bg:#F0FDF4;--green-border:#BBF7D0;--red:#B91C1C;--radius:10px;--radius-sm:6px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;background:var(--bg-page);color:var(--text-primary);font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+.topbar{background:var(--bg-surface);border-bottom:1px solid var(--border);height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:baseline;gap:12px}.brand-name{font-size:15px;font-weight:650;letter-spacing:-.3px}.brand-ver{font-size:12px;color:var(--text-muted);padding-left:12px;border-left:1px solid var(--border)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.privacy{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);background:var(--bg-muted);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.quota{font-size:12px;color:var(--text-secondary);padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-variant-numeric:tabular-nums}
+.quota.pro{color:var(--green);background:var(--green-bg);border-color:var(--green-border);font-weight:600}
+.btn{cursor:pointer;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-primary);padding:7px 14px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500}
+.btn:hover{background:var(--bg-muted)}.btn-primary{background:var(--text-primary);color:#fff;border-color:var(--text-primary)}.btn-ghost{background:var(--bg-muted);color:var(--text-secondary);padding:4px 10px;font-size:11.5px;border:1px solid var(--border);border-radius:4px}
+.container{max-width:1080px;margin:0 auto;padding:24px 28px 56px}
+.hero{margin-bottom:18px}.hero h1{font-size:22px;font-weight:650;letter-spacing:-.4px;margin-bottom:6px}.hero p{color:var(--text-secondary);font-size:13.5px;max-width:640px}
+.grid2{display:grid;grid-template-columns:1fr 1.1fr;gap:14px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap}.card-title{font-size:13.5px;font-weight:600}
+.field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:5px}
+.field input,.field select{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 11px;font-size:13px;font-variant-numeric:tabular-nums;outline:none;background:var(--bg-subtle);color:var(--text-primary)}
+.field input:focus,.field select:focus{border-color:var(--text-primary);background:#fff}
+.seg{display:flex;background:var(--bg-muted);padding:3px;border-radius:8px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;padding:8px 6px;border-radius:6px;font-size:12px;color:var(--text-muted);cursor:pointer;font-weight:500}
+.seg button.active{background:#fff;color:var(--text-primary);box-shadow:0 1px 2px rgba(0,0,0,.04);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.metric{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric-k{font-size:11px;color:var(--text-muted)}.metric-v{font-size:20px;font-weight:650;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.3px}.metric-s{font-size:11px;color:var(--text-faint);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
+th{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;font-size:11.5px;background:var(--bg-subtle)}
+td{padding:9px 10px;border-bottom:1px solid #F4F4F5}td.r,th.r{text-align:right}.total-row td{font-weight:650;border-top:1px solid var(--border);background:var(--bg-subtle)}
+.legal-box{background:var(--bg-subtle);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap;font-family:"PingFang SC","Noto Sans CJK SC",sans-serif;-webkit-user-select:text;user-select:text;max-height:360px;overflow:auto}
+.hint{font-size:11.5px;color:var(--text-faint);margin-top:8px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,24,27,.35);z-index:50;align-items:center;justify-content:center}
+.modal-backdrop.show{display:flex}
+.modal{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(420px,92vw)}
+.modal h3{font-size:16px;margin-bottom:8px}.modal p{font-size:12.5px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6}
+.key-field{width:100%;border:1px solid var(--border-strong);border-radius:6px;padding:10px 12px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;text-transform:uppercase;outline:none;margin:10px 0}
+.feedback{min-height:20px;font-size:12px;margin-bottom:8px}
+.footer-note{margin-top:16px;font-size:11.5px;color:var(--text-faint);text-align:center}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-name">赔偿金计算器</div><div class="brand-ver">N / N+1 / 2N · 年假 · 加班费 · 仲裁附表</div></div>
+  <div class="nav-right">
+    <div class="privacy"><span class="dot"></span>本地计算 · 零上传</div>
+    <div class="quota" id="quotaBadge">试用剩余 3 / 3 次</div>
+    <button type="button" class="btn" id="activateBtn">激活专业版</button>
+  </div>
+</header>
+<main class="container">
+  <section class="hero">
+    <h1>把 N、N+1、2N 和未休年假、加班费算清楚。</h1>
+    <p>按《劳动合同法》第40 / 46 / 47 / 87 条口径，自动折算工龄 N 值，生成可直接整理进仲裁申请书的请求事项与计算附表。</p>
+  </section>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button type="button" class="btn-ghost" id="btnSample">填入示例数据</button>
+    <button type="button" class="btn-ghost" id="btnReset">清空重置</button>
+  </div>
+  <div class="grid2">
+    <section class="card" style="margin:0">
+      <div class="card-head"><span class="card-title">基本信息</span></div>
+      <div class="row2">
+        <div class="field"><label>入职日期</label><input type="date" id="startDate" value=""/></div>
+        <div class="field"><label>离职 / 解除日期</label><input type="date" id="endDate" value=""/></div>
+      </div>
+      <div class="field"><label>解除类型</label>
+        <div class="seg" id="modeSeg">
+          <button type="button" data-mode="N">协商/裁员 N</button>
+          <button type="button" class="active" data-mode="N+1">无过失 N+1</button>
+          <button type="button" data-mode="2N">违法解除 2N</button>
+        </div>
+      </div>
+      <div class="field"><label>离职前 12 个月平均应发工资（元）</label><input type="number" id="wage" value="" step="0.01" placeholder="含奖金津贴的月均应发"/></div>
+      <div class="field"><label>当地社平工资 ×3 封顶基数（元，可选）</label><input type="number" id="socialCap" value="" step="0.01" placeholder="不填则不启用三倍封顶"/></div>
+      <div class="row2">
+        <div class="field"><label>当年未休年假（天）</label><input type="number" id="leaveDays" value="" min="0" step="0.5"/></div>
+        <div class="field"><label>欠薪 / 未发年终奖（元）</label><input type="number" id="unpaid" value="" min="0" step="0.01"/></div>
+      </div>
+      <div class="card-title" style="margin:8px 0 10px">未结加班时长（小时）</div>
+      <div class="row2">
+        <div class="field"><label>工作日延时 ×150%</label><input type="number" id="otWD" value="" min="0" step="0.5"/></div>
+        <div class="field"><label>休息日 ×200%</label><input type="number" id="otRest" value="" min="0" step="0.5"/></div>
+      </div>
+      <div class="field"><label>法定节假日 ×300%</label><input type="number" id="otHoliday" value="" min="0" step="0.5"/></div>
+      <button type="button" class="btn btn-primary" id="btnCalc" style="width:100%;margin-top:4px">立即计算主张金额</button>
+    </section>
+    <div>
+      <section class="metrics">
+        <div class="metric"><div class="metric-k">折算工龄</div><div class="metric-v" id="oMonths">—</div><div class="metric-s" id="oN">N = —</div></div>
+        <div class="metric"><div class="metric-k">补偿 / 赔偿金</div><div class="metric-v" id="oComp">—</div><div class="metric-s" id="oCompSub">含代通知金</div></div>
+        <div class="metric"><div class="metric-k">合计应得</div><div class="metric-v" id="oTotal" style="color:#15803D">—</div><div class="metric-s">经济补偿+年假+加班+欠薪</div></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><span class="card-title">各项主张金额</span></div>
+        <table>
+          <thead><tr><th>项目</th><th class="r">金额（元）</th><th>说明</th></tr></thead>
+          <tbody id="detailBody"><tr><td colspan="3" style="text-align:center;color:#A1A1AA;padding:28px">填写左侧信息后点击计算</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+  <section class="card">
+    <div class="card-head">
+      <span class="card-title">仲裁申请书 · 请求事项与计算附表</span>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="btn" id="btnGenLegal">生成标准文本</button>
+        <button type="button" class="btn btn-primary" id="btnExport">导出 Excel 明细</button>
+      </div>
+    </div>
+    <div id="legalBox" class="legal-box">点击「生成标准文本」后，可在此全选复制到 Word / 仲裁申请材料中。</div>
+    <p class="hint">本工具仅辅助金额整理与法条索引，具体主张请结合劳动合同、工资流水、考勤记录及当地裁审口径，必要时咨询专业律师。</p>
+  </section>
+  <p class="footer-note">图灵320 · 赔偿金计算器 · TL320-XXXX-XXXX-XXXX 通兑激活</p>
+</main>
+<div class="modal-backdrop" id="activateModal"><div class="modal">
+  <h3>激活专业版</h3>
+  <p>输入 TL320-XXXX-XXXX-XXXX。与图灵320其他工具通兑，本地验证。</p>
+  <input class="key-field" id="licenseInput" placeholder="TL320-XXXX-XXXX-XXXX"/>
+  <div class="feedback" id="modalMsg"></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px">
+    <button type="button" class="btn" id="btnModalCancel">取消</button>
+    <button type="button" class="btn btn-primary" id="btnModalOk">确认激活</button>
+  </div>
+</div></div>
+<script>
+(function(){
+
+  var CHARS="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var STORAGE_KEY_PRO="tl320_universal_pro_licensed_v1";
+  var STORAGE_KEY_PRO_LEGACY="tl320_flowsheet_pro_licensed_v1";
+  var STORAGE_KEY_QUOTA="tl320_labor_free_left_v1";
+  function safeGetStorage(k){try{return window.localStorage?window.localStorage.getItem(k):null}catch(e){return null}}
+  function safeSetStorage(k,v){try{if(window.localStorage)window.localStorage.setItem(k,v)}catch(e){}}
+  function computeChecksum(a,b){var secret="Tuling320_Secret_2026";var str="TL320-"+a+"-"+b+"-"+secret;var h1=0x811c9dc5>>>0;var h2=0x01000193>>>0;for(var i=0;i<str.length;i++){var c=str.charCodeAt(i);h1=Math.imul(h1^c,0x01000193)>>>0;h2=(Math.imul(h2^c,0x5bd1e995)+i*31)>>>0}return CHARS[h1%32]+CHARS[(h1>>>8)%32]+CHARS[h2%32]+CHARS[(h2>>>8)%32]}
+  function verifyLicenseKey(key){if(!key||typeof key!=="string")return false;var clean=key.trim().toUpperCase();var m=clean.match(/^TL320-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);if(!m)return false;return computeChecksum(m[1],m[2])===m[3]}
+  function isProUnlocked(){return safeGetStorage(STORAGE_KEY_PRO)==="true"||safeGetStorage(STORAGE_KEY_PRO_LEGACY)==="true"}
+  function unlockPro(){safeSetStorage(STORAGE_KEY_PRO,"true");safeSetStorage(STORAGE_KEY_PRO_LEGACY,"true")}
+  function getFreeQuota(){var v=safeGetStorage(STORAGE_KEY_QUOTA);if(v===null){safeSetStorage(STORAGE_KEY_QUOTA,"3");return 3}var n=parseInt(v,10);return isNaN(n)?3:Math.max(0,n)}
+  function consumeQuota(){if(isProUnlocked())return true;var left=getFreeQuota();if(left<=0)return false;safeSetStorage(STORAGE_KEY_QUOTA,String(left-1));return true}
+
+
+  function fmt(n){return Number(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
+  function parseDate(s){var p=String(s).split(/[-/.]/);if(p.length<3)return null;return new Date(+p[0],+p[1]-1,+p[2])}
+  function monthsBetween(a,b){
+    if(!a||!b||b<a) return 0;
+    var years=b.getFullYear()-a.getFullYear();
+    var months=b.getMonth()-a.getMonth();
+    var days=b.getDate()-a.getDate();
+    var total=years*12+months;
+    if(days<0) total-=1;
+    /* add partial month if days suggest >= half? Law uses: 不满6个月=0.5, 满6个月不满1年=1 */
+    return Math.max(0,total);
+  }
+  function calcN(months){
+    /* Convert total months to N per Labor Contract Law Art.47 */
+    if(months<=0) return 0;
+    var fullYears=Math.floor(months/12);
+    var rem=months%12;
+    var n=fullYears;
+    if(rem===0){ /* exact years */ }
+    else if(rem<6) n+=0.5;
+    else n+=1;
+    if(n>12) n=12; /* high-income cap years often 12; we also apply wage cap separately */
+    return n;
+  }
+  function dailyWage(monthly){return monthly/21.75}
+  function compute(input){
+    var start=parseDate(input.start), end=parseDate(input.end);
+    var months=monthsBetween(start,end);
+    var n=calcN(months);
+    var wage=+input.wage||0;
+    var socialCap=+input.socialCap||0; /* 当地社平工资的3倍，0=不启用 */
+    var baseWage=wage;
+    var capped=false;
+    if(socialCap>0 && wage>socialCap){ baseWage=socialCap; capped=true; }
+    var mode=input.mode; /* N | N+1 | 2N */
+    var econ=0, notice=0, illegal=0;
+    if(mode==="N"){ econ=baseWage*n; }
+    else if(mode==="N+1"){ econ=baseWage*n; notice=baseWage; }
+    else if(mode==="2N"){ illegal=baseWage*n*2; }
+    var leaveDays=+input.leaveDays||0;
+    var leavePay=dailyWage(wage)*leaveDays*2; /* 未休年假 200% 额外差额（不含本人工资已含的100%时常见主张为200%总额或300%-已付；此处按日工资×200%额外差额）*/
+    var otWD=+input.otWD||0, otRest=+input.otRest||0, otHoliday=+input.otHoliday||0;
+    var hourWage=wage/21.75/8;
+    var otPay=hourWage*otWD*1.5 + hourWage*otRest*2 + hourWage*otHoliday*3;
+    var unpaid=+input.unpaid||0;
+    var total=econ+notice+illegal+leavePay+otPay+unpaid;
+    return {
+      months:months, n:n, baseWage:baseWage, capped:capped,
+      econ:econ, notice:notice, illegal:illegal, leavePay:leavePay, otPay:otPay, unpaid:unpaid, total:total,
+      daily:dailyWage(wage), hour:hourWage, mode:mode, wage:wage
+    };
+  }
+  function legalText(input, r){
+    var modeName={N:"协商一致解除 / 经济性裁员（支付 N）", "N+1":"无过失性辞退且未提前30日书面通知（N+1）", "2N":"违法解除劳动合同（2N 赔偿金）"}[r.mode];
+    var lines=[];
+    lines.push("《劳动人事争议仲裁申请书》· 请求事项与计算附表");
+    lines.push("（本表由「图灵320 · 赔偿金计算器」本地生成，供整理主张金额参考，不构成法律意见。）");
+    lines.push("");
+    lines.push("一、劳动关系期间");
+    lines.push("入职日期："+input.start+"；离职/解除日期："+input.end+"；");
+    lines.push("折算工作月数："+r.months+" 个月；法定 N 值："+r.n+" 个月"+(r.capped?"（已触发社平工资三倍封顶基数）":"）")+"。");
+    lines.push("");
+    lines.push("二、解除情形与法律依据");
+    lines.push(modeName);
+    if(r.mode==="N") lines.push("依据：《劳动合同法》第46条、第47条（经济补偿按工作年限支付）。");
+    if(r.mode==="N+1") lines.push("依据：《劳动合同法》第40条、第46条、第47条（未提前30日通知应额外支付一个月工资作为代通知金）。");
+    if(r.mode==="2N") lines.push("依据：《劳动合同法》第87条（违法解除应按经济补偿标准的二倍支付赔偿金）。");
+    lines.push("");
+    lines.push("三、请求事项金额明细");
+    lines.push("1. 经济补偿金 / 赔偿金：¥"+fmt(r.econ+r.illegal)+"  （基数 ¥"+fmt(r.baseWage)+" × N="+r.n+(r.mode==="2N"?" × 2":"")+"）");
+    if(r.notice>0) lines.push("2. 代通知金（+1）：¥"+fmt(r.notice));
+    lines.push((r.notice>0?"3":"2")+". 未休年假工资差额：¥"+fmt(r.leavePay)+"  （日工资 ¥"+fmt(r.daily)+" × "+input.leaveDays+" 天 × 200%）");
+    lines.push("加班费：¥"+fmt(r.otPay)+"  （工作日延时 "+input.otWD+"h×150% + 休息日 "+input.otRest+"h×200% + 法定假 "+input.otHoliday+"h×300%）");
+    lines.push("欠薪 / 未发年终奖等：¥"+fmt(r.unpaid));
+    lines.push("");
+    lines.push("四、合计请求金额：¥"+fmt(r.total));
+    lines.push("");
+    lines.push("五、说明");
+    lines.push("· N 值折算：每满一年支付一个月工资；六个月以上不满一年按一年；不满六个月支付半个月工资。");
+    lines.push("· 月工资为解除前十二个月平均应得工资；高于当地上年度职工月平均工资三倍的，按三倍封顶，年限最高十二年。");
+    lines.push("· 未休年假与加班费计算口径请结合单位考勤与地方裁审口径核对。");
+    return lines.join("\n");
+  }
+
+  var mode="N+1";
+  var last=null;
+  function updateQuotaUI(){
+    var badge=document.getElementById("quotaBadge"), btn=document.getElementById("activateBtn");
+    if(isProUnlocked()){badge.className="quota pro";badge.textContent="已授权：专业版 (无限制)";btn.style.display="none"}
+    else{badge.className="quota";badge.textContent="试用剩余 "+getFreeQuota()+" / 3 次";btn.style.display="inline-flex"}
+  }
+  function readInput(){
+    return {
+      start:document.getElementById("startDate").value,
+      end:document.getElementById("endDate").value,
+      wage:document.getElementById("wage").value,
+      socialCap:document.getElementById("socialCap").value,
+      leaveDays:document.getElementById("leaveDays").value||0,
+      unpaid:document.getElementById("unpaid").value||0,
+      otWD:document.getElementById("otWD").value||0,
+      otRest:document.getElementById("otRest").value||0,
+      otHoliday:document.getElementById("otHoliday").value||0,
+      mode:mode
+    };
+  }
+  function paint(r, input){
+    last={r:r,input:input};
+    document.getElementById("oMonths").textContent=r.months+" 月";
+    document.getElementById("oN").textContent="N = "+r.n+(r.capped?" · 已封顶基数":"");
+    document.getElementById("oComp").textContent="¥"+fmt(r.econ+r.notice+r.illegal);
+    document.getElementById("oCompSub").textContent=r.mode==="N+1"?"经济补偿 + 代通知金":(r.mode==="2N"?"违法赔偿金 2N":"经济补偿金 N");
+    document.getElementById("oTotal").textContent="¥"+fmt(r.total);
+    var rows=[
+      ["经济补偿金 N", r.econ, "基数 ¥"+fmt(r.baseWage)+" × "+r.n],
+      ["代通知金 +1", r.notice, r.mode==="N+1"?"未提前30日通知":"—"],
+      ["违法解除赔偿金 2N", r.illegal, r.mode==="2N"?"《劳动合同法》第87条":"—"],
+      ["未休年假工资", r.leavePay, "日工资×天数×200%"],
+      ["加班费合计", r.otPay, "150%/200%/300%"],
+      ["欠薪 / 年终奖", r.unpaid, "据实填写"]
+    ];
+    var html="";
+    for(var i=0;i<rows.length;i++){
+      if(rows[i][1]<=0 && (rows[i][0].indexOf("代通知")>=0 || rows[i][0].indexOf("2N")>=0)) continue;
+      html+="<tr><td>"+rows[i][0]+'</td><td class="r" style="font-weight:600">'+fmt(rows[i][1])+"</td><td style=\"color:#71717A\">"+rows[i][2]+"</td></tr>";
+    }
+    html+='<tr class="total-row"><td>合计应得</td><td class="r">'+fmt(r.total)+'</td><td>建议作为仲裁请求总金额</td></tr>';
+    document.getElementById("detailBody").innerHTML=html;
+  }
+  function doCalc(){
+    var input=readInput();
+    if(!input.start||!input.end||!input.wage){alert("请至少填写入职日期、离职日期与月均工资。");return}
+    var r=compute(input);
+    paint(r,input);
+  }
+  document.querySelectorAll("#modeSeg button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll("#modeSeg button").forEach(function(b){b.classList.remove("active")});
+      btn.classList.add("active"); mode=btn.getAttribute("data-mode");
+      if(last) { var input=readInput(); paint(compute(input), input); }
+    });
+  });
+  document.getElementById("btnCalc").addEventListener("click", doCalc);
+  document.getElementById("btnSample").addEventListener("click", function(){
+    document.getElementById("startDate").value="2019-03-15";
+    document.getElementById("endDate").value="2026-09-30";
+    document.getElementById("wage").value="18500";
+    document.getElementById("socialCap").value="";
+    document.getElementById("leaveDays").value="7";
+    document.getElementById("unpaid").value="5000";
+    document.getElementById("otWD").value="48";
+    document.getElementById("otRest").value="16";
+    document.getElementById("otHoliday").value="8";
+    mode="N+1";
+    document.querySelectorAll("#modeSeg button").forEach(function(b){b.classList.toggle("active", b.getAttribute("data-mode")==="N+1")});
+    doCalc();
+  });
+  document.getElementById("btnReset").addEventListener("click", function(){
+    ["startDate","endDate","wage","socialCap","leaveDays","unpaid","otWD","otRest","otHoliday"].forEach(function(id){document.getElementById(id).value=""});
+    last=null;
+    document.getElementById("oMonths").textContent="—";
+    document.getElementById("oN").textContent="N = —";
+    document.getElementById("oComp").textContent="—";
+    document.getElementById("oTotal").textContent="—";
+    document.getElementById("detailBody").innerHTML='<tr><td colspan="3" style="text-align:center;color:#A1A1AA;padding:28px">填写左侧信息后点击计算</td></tr>';
+    document.getElementById("legalBox").textContent="点击「生成标准文本」后，可在此全选复制到 Word / 仲裁申请材料中。";
+  });
+  document.getElementById("btnGenLegal").addEventListener("click", function(){
+    if(!last){alert("请先计算主张金额。");return}
+    if(!consumeQuota()){
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").textContent="免费生成次数已用完，请激活专业版。";
+      updateQuotaUI(); return;
+    }
+    updateQuotaUI();
+    document.getElementById("legalBox").textContent=legalText(last.input, last.r);
+  });
+  document.getElementById("btnExport").addEventListener("click", function(){
+    if(!last){alert("请先计算。");return}
+    if(!consumeQuota()){
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").textContent="免费导出已用完。";
+      updateQuotaUI(); return;
+    }
+    updateQuotaUI();
+    var r=last.r, input=last.input;
+    var lines=["项目,金额,说明","折算月数,"+r.months+",","N值,"+r.n+",","月工资基数,"+r.baseWage+(r.capped?",已三倍封顶":","),"经济补偿N,"+r.econ.toFixed(2)+",","代通知金,"+r.notice.toFixed(2)+",","违法赔偿2N,"+r.illegal.toFixed(2)+",","未休年假,"+r.leavePay.toFixed(2)+","+input.leaveDays+"天","加班费,"+r.otPay.toFixed(2)+",","欠薪年终奖,"+r.unpaid.toFixed(2)+",","合计,"+r.total.toFixed(2)+","];
+    var blob=new Blob(["\uFEFF"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="离职赔偿金_主张明细.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  document.getElementById("activateBtn").addEventListener("click", function(){document.getElementById("activateModal").classList.add("show");document.getElementById("modalMsg").textContent=""});
+  document.getElementById("btnModalCancel").addEventListener("click", function(){document.getElementById("activateModal").classList.remove("show")});
+  document.getElementById("btnModalOk").addEventListener("click", function(){
+    var msg=document.getElementById("modalMsg");
+    if(verifyLicenseKey(document.getElementById("licenseInput").value)){unlockPro();msg.style.color="#15803D";msg.textContent="验证通过。";updateQuotaUI();setTimeout(function(){document.getElementById("activateModal").classList.remove("show")},500)}
+    else{msg.style.color="#B91C1C";msg.textContent="激活码校验未通过。"}
+  });
+  updateQuotaUI();
+})();
+</script>
+</body>
+</html>
