@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>电商保本ROI与退货率毛利沙盘 · 图灵320</title>
+<style>
+:root{--bg-page:#F8F9FA;--bg-surface:#FFFFFF;--bg-subtle:#FAFAFA;--bg-muted:#F4F4F5;--border:#E4E4E7;--border-strong:#D4D4D8;--text-primary:#18181B;--text-secondary:#52525B;--text-muted:#71717A;--text-faint:#A1A1AA;--green:#15803D;--green-bg:#F0FDF4;--green-border:#BBF7D0;--red:#B91C1C;--radius:10px;--radius-sm:6px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;background:var(--bg-page);color:var(--text-primary);font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+.topbar{background:var(--bg-surface);border-bottom:1px solid var(--border);height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:baseline;gap:12px}.brand-name{font-size:15px;font-weight:650;letter-spacing:-.3px}.brand-ver{font-size:12px;color:var(--text-muted);padding-left:12px;border-left:1px solid var(--border)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.privacy{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);background:var(--bg-muted);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.quota{font-size:12px;color:var(--text-secondary);padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);font-variant-numeric:tabular-nums}
+.quota.pro{color:var(--green);background:var(--green-bg);border-color:var(--green-border);font-weight:600}
+.btn{cursor:pointer;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-primary);padding:7px 14px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500}
+.btn:hover{background:var(--bg-muted)}.btn-primary{background:var(--text-primary);color:#fff;border-color:var(--text-primary)}.btn-ghost{background:var(--bg-muted);color:var(--text-secondary);border-color:var(--border);padding:4px 10px;font-size:11.5px}
+.container{max-width:1120px;margin:0 auto;padding:24px 28px 56px}
+.hero{margin-bottom:18px}.hero h1{font-size:22px;font-weight:650;letter-spacing:-.4px;margin-bottom:6px}.hero p{color:var(--text-secondary);font-size:13.5px;max-width:620px}
+.grid2{display:grid;grid-template-columns:1fr 1.15fr;gap:14px}@media(max-width:920px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.card-title{font-size:13.5px;font-weight:600}
+.field{margin-bottom:14px}.field label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);margin-bottom:6px}
+.field .val{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+input[type=range]{width:100%;accent-color:#18181B;height:4px}
+.numrow{display:flex;gap:8px;align-items:center}
+.numrow input[type=number]{flex:1;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-variant-numeric:tabular-nums;outline:none;background:var(--bg-subtle)}
+.numrow input:focus{border-color:var(--text-primary);background:#fff}
+.unit{font-size:12px;color:var(--text-muted);min-width:28px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}@media(max-width:800px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric-k{font-size:11px;color:var(--text-muted)}.metric-v{font-size:20px;font-weight:650;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.4px}
+.metric-v.good{color:var(--green)}.metric-v.warn{color:var(--red)}.metric-s{font-size:11px;color:var(--text-faint);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
+th{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;font-size:11.5px;background:var(--bg-subtle)}
+td{padding:9px 10px;border-bottom:1px solid #F4F4F5}
+td.r,th.r{text-align:right}.neg{color:var(--red)}.pos{color:var(--green)}
+.waterfall .bar-row{display:grid;grid-template-columns:120px 1fr 80px;gap:10px;align-items:center;margin-bottom:8px;font-size:12px}
+.bar{height:10px;border-radius:4px;background:var(--bg-muted);overflow:hidden}
+.bar>i{display:block;height:100%;background:#18181B;border-radius:4px}
+.bar>i.green{background:var(--green)}.bar>i.muted{background:#A1A1AA}.bar>i.red{background:#FCA5A5}
+.matrix-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px}
+.locked-note{font-size:12px;color:var(--text-muted);padding:16px;text-align:center;background:var(--bg-subtle);border-radius:8px;border:1px dashed var(--border)}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,24,27,.35);z-index:50;align-items:center;justify-content:center}
+.modal-backdrop.show{display:flex}
+.modal{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(420px,92vw)}
+.modal h3{font-size:16px;margin-bottom:8px}.modal p{font-size:12.5px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6}
+.key-field{width:100%;border:1px solid var(--border-strong);border-radius:6px;padding:10px 12px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;text-transform:uppercase;outline:none;margin:10px 0}
+.feedback{min-height:20px;font-size:12px;margin-bottom:8px}
+.footer-note{margin-top:16px;font-size:11.5px;color:var(--text-faint);text-align:center}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-name">ROI 毛利沙盘</div><div class="brand-ver">保本投流 ROI · 退货率敏感度 · 定价决策</div></div>
+  <div class="nav-right">
+    <div class="privacy"><span class="dot"></span>本地计算 · 零上传</div>
+    <div class="quota" id="quotaBadge">试用剩余 3 / 3 次</div>
+    <button type="button" class="btn" id="activateBtn">激活专业版</button>
+  </div>
+</header>
+<main class="container">
+  <section class="hero">
+    <h1>一眼看穿：这个价、这个退货率，投流会不会亏。</h1>
+    <p>把拿货、快递、扣点、达人分佣、退货损耗与广告 ROI 放进同一张沙盘。实时算出保本 ROI、真实毛利，以及每出 100 单的利润瀑布。</p>
+  </section>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button type="button" class="btn-ghost" id="btnSample">填入示例数据</button>
+    <button type="button" class="btn-ghost" id="btnReset">清空重置</button>
+  </div>
+  <div class="grid2">
+    <section class="card" style="margin:0">
+      <div class="card-head"><span class="card-title">经营假设</span></div>
+      <div class="field"><label><span>商品售价</span><span class="val" id="vPrice">¥99.00</span></label>
+        <div class="numrow"><input type="range" id="rPrice" min="9" max="999" step="1" value="99"/><input type="number" id="nPrice" value="99" step="0.01"/><span class="unit">元</span></div></div>
+      <div class="field"><label><span>拿货 / 生产成本</span><span class="val" id="vCost">¥32.00</span></label>
+        <div class="numrow"><input type="range" id="rCost" min="0" max="500" step="1" value="32"/><input type="number" id="nCost" value="32" step="0.01"/><span class="unit">元</span></div></div>
+      <div class="field"><label><span>单均快递与包装</span><span class="val" id="vShip">¥6.00</span></label>
+        <div class="numrow"><input type="range" id="rShip" min="0" max="40" step="0.5" value="6"/><input type="number" id="nShip" value="6" step="0.1"/><span class="unit">元</span></div></div>
+      <div class="field"><label><span>退货率</span><span class="val" id="vRet">15.0%</span></label>
+        <div class="numrow"><input type="range" id="rRet" min="0" max="60" step="0.5" value="15"/><input type="number" id="nRet" value="15" step="0.5"/><span class="unit">%</span></div></div>
+      <div class="field"><label><span>退货损耗 / 运费险</span><span class="val" id="vLoss">¥3.00</span></label>
+        <div class="numrow"><input type="range" id="rLoss" min="0" max="30" step="0.5" value="3"/><input type="number" id="nLoss" value="3" step="0.1"/><span class="unit">元</span></div></div>
+      <div class="field"><label><span>平台扣点 / 技术服务费</span><span class="val" id="vFee">5.0%</span></label>
+        <div class="numrow"><input type="range" id="rFee" min="0" max="30" step="0.1" value="5"/><input type="number" id="nFee" value="5" step="0.1"/><span class="unit">%</span></div></div>
+      <div class="field"><label><span>达人分佣</span><span class="val" id="vKol">10.0%</span></label>
+        <div class="numrow"><input type="range" id="rKol" min="0" max="40" step="0.5" value="10"/><input type="number" id="nKol" value="10" step="0.1"/><span class="unit">%</span></div></div>
+      <div class="field"><label><span>投流预算（100 单口径可改）</span><span class="val" id="vAd">¥2,000</span></label>
+        <div class="numrow"><input type="range" id="rAd" min="0" max="20000" step="50" value="2000"/><input type="number" id="nAd" value="2000" step="10"/><span class="unit">元</span></div></div>
+      <div class="field"><label><span>目标 / 实际投流 ROI</span><span class="val" id="vRoi">2.50</span></label>
+        <div class="numrow"><input type="range" id="rRoi" min="0.5" max="10" step="0.05" value="2.5"/><input type="number" id="nRoi" value="2.5" step="0.05"/><span class="unit">x</span></div></div>
+    </section>
+    <div>
+      <section class="metrics">
+        <div class="metric"><div class="metric-k">保本投流 ROI</div><div class="metric-v" id="oBeRoi">—</div><div class="metric-s">盈亏平衡点（GMV/广告）</div></div>
+        <div class="metric"><div class="metric-k">保本广告费占比</div><div class="metric-v" id="oBeShare">—</div><div class="metric-s">广告 / 售价</div></div>
+        <div class="metric"><div class="metric-k">表面毛利率</div><div class="metric-v" id="oSurf">—</div><div class="metric-s">未计退货与扣点</div></div>
+        <div class="metric"><div class="metric-k">真实毛利率</div><div class="metric-v" id="oReal">—</div><div class="metric-s">计入退货 · 扣点 · 分佣</div></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><span class="card-title">每出 100 单 · 利润瀑布</span><span id="oNetTag" class="metric-s"></span></div>
+        <div id="waterfall"></div>
+      </section>
+    </div>
+  </div>
+  <section class="card">
+    <div class="card-head">
+      <span class="card-title">阶梯定价 × 退货率 · 保本 ROI 敏感度矩阵</span>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="btn" id="btnMatrix">生成深度矩阵</button>
+        <button type="button" class="btn btn-primary" id="btnExport">导出测算报告</button>
+      </div>
+    </div>
+    <div id="matrixBox"><div class="locked-note">点击「生成深度矩阵」查看不同售价与退货率下的保本 ROI（计入 3 次免费深度计算额度）。</div></div>
+  </section>
+  <p class="footer-note">图灵320 · ROI 毛利沙盘 · TL320-XXXX-XXXX-XXXX 通兑激活</p>
+</main>
+<div class="modal-backdrop" id="activateModal"><div class="modal">
+  <h3>激活专业版</h3>
+  <p>输入 TL320-XXXX-XXXX-XXXX。与图灵320其他工具共用卡密，本地验证。</p>
+  <input class="key-field" id="licenseInput" placeholder="TL320-XXXX-XXXX-XXXX"/>
+  <div class="feedback" id="modalMsg"></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px">
+    <button type="button" class="btn" id="btnModalCancel">取消</button>
+    <button type="button" class="btn btn-primary" id="btnModalOk">确认激活</button>
+  </div>
+</div></div>
+<script>
+(function(){
+
+  var CHARS="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var STORAGE_KEY_PRO="tl320_universal_pro_licensed_v1";
+  var STORAGE_KEY_PRO_LEGACY="tl320_flowsheet_pro_licensed_v1";
+  var STORAGE_KEY_QUOTA="tl320_ecomroi_free_left_v1";
+  function safeGetStorage(k){try{return window.localStorage?window.localStorage.getItem(k):null}catch(e){return null}}
+  function safeSetStorage(k,v){try{if(window.localStorage)window.localStorage.setItem(k,v)}catch(e){}}
+  function computeChecksum(part1,part2){var secret="Tuling320_Secret_2026";var str="TL320-"+part1+"-"+part2+"-"+secret;var h1=0x811c9dc5>>>0;var h2=0x01000193>>>0;for(var i=0;i<str.length;i++){var c=str.charCodeAt(i);h1=Math.imul(h1^c,0x01000193)>>>0;h2=(Math.imul(h2^c,0x5bd1e995)+i*31)>>>0}return CHARS[h1%32]+CHARS[(h1>>>8)%32]+CHARS[h2%32]+CHARS[(h2>>>8)%32]}
+  function verifyLicenseKey(key){if(!key||typeof key!=="string")return false;var clean=key.trim().toUpperCase();var match=clean.match(/^TL320-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);if(!match)return false;return computeChecksum(match[1],match[2])===match[3]}
+  function isProUnlocked(){return safeGetStorage(STORAGE_KEY_PRO)==="true"||safeGetStorage(STORAGE_KEY_PRO_LEGACY)==="true"}
+  function unlockPro(){safeSetStorage(STORAGE_KEY_PRO,"true");safeSetStorage(STORAGE_KEY_PRO_LEGACY,"true")}
+  function getFreeQuota(){var val=safeGetStorage(STORAGE_KEY_QUOTA);if(val===null){safeSetStorage(STORAGE_KEY_QUOTA,"3");return 3}var n=parseInt(val,10);return isNaN(n)?3:Math.max(0,n)}
+  function consumeQuota(){if(isProUnlocked())return true;var left=getFreeQuota();if(left<=0)return false;safeSetStorage(STORAGE_KEY_QUOTA,String(left-1));return true}
+
+
+  function fmt(n,d){d=d==null?2:d;return Number(n||0).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
+  function pct(n){return fmt(n,1)+"%"}
+  function calc(p){
+    var price=+p.price,cost=+p.cost,ship=+p.ship,retRate=+p.retRate/100,retLoss=+p.retLoss;
+    var feePct=+p.feePct/100,kolPct=+p.kolPct/100,adBudget=+p.adBudget,targetRoi=+p.targetRoi;
+    var surfaceMargin = price<=0?0:((price-cost-ship)/price)*100;
+    var keepRate = 1-retRate;
+    var revenuePerOrder = price*keepRate;
+    var cogsPerOrder = (cost+ship)*keepRate + (cost*0 + retLoss)*retRate;
+    /* more accurate: pay cost+ship on all shipped; get price only on kept; pay retLoss on returned */
+    var unitVarCost = cost + ship;
+    var contribKept = price - unitVarCost - price*feePct - price*kolPct;
+    var lossOnReturn = unitVarCost + retLoss - 0; /* shipped then returned: lost ship+pack + retLoss, reclaim cost if restockable — assume cost sunk or partial: use retLoss as extra */
+    /* Simplified institutional model used in Chinese ecommerce ROI:
+       单均贡献毛利(未计投流) = (售价 - 拿货 - 快递) * (1-退货率) - 退货损耗*退货率 - 售价*(扣点+分佣)*(1-退货率)
+       Actually platform fee usually charged on GMV before return or after — assume on successful GMV */
+    var gmvKept = price * keepRate;
+    var platformFee = gmvKept * feePct;
+    var kolFee = gmvKept * kolPct;
+    var productCostAll = cost; /* cost incurred per order attempt */
+    var shipAll = ship;
+    var returnExtra = retLoss * retRate;
+    var realGrossPerAttempt = gmvKept - productCostAll - shipAll - returnExtra - platformFee - kolFee;
+    var realMargin = price<=0?0:(realGrossPerAttempt/price)*100;
+    /* Break-even ad spend per order attempt such that realGross - ad = 0 */
+    var beAdPerOrder = Math.max(0, realGrossPerAttempt);
+    /* Break-even ROI = GMV / AdSpend. If we spend A on ads to get 1 order attempt:
+       profit = realGrossPerAttempt - A; break-even A = realGrossPerAttempt
+       ROI_be = price / A  (using GMV per attempt = price, common marketplace definition) 
+       Some use paid GMV / ad. We use 成交金额(含未退)/广告消耗 as primary, and also show 有效GMV口径 */
+    var beRoi = beAdPerOrder>0.01 ? (price / beAdPerOrder) : 999;
+    var beRoiEff = beAdPerOrder>0.01 ? (gmvKept / beAdPerOrder) : 999;
+    var beAdShare = price>0 ? (beAdPerOrder/price)*100 : 0;
+    /* With actual/target ROI: ad per order = price / roi */
+    var adPerOrder = targetRoi>0 ? price/targetRoi : 0;
+    var profitAtTarget = realGrossPerAttempt - adPerOrder;
+    /* 100-order waterfall */
+    var n=100;
+    var gmv100 = price*n;
+    var kept100 = n*keepRate;
+    var refundGMV = price*n*retRate;
+    var cost100 = cost*n;
+    var ship100 = ship*n;
+    var retLoss100 = retLoss*n*retRate;
+    var fee100 = price*kept100*feePct;
+    var kol100 = price*kept100*kolPct;
+    var ad100 = adBudget>0 ? adBudget : adPerOrder*n;
+    var net100 = price*kept100 - cost100 - ship100 - retLoss100 - fee100 - kol100 - ad100;
+    return {
+      surfaceMargin:surfaceMargin, realMargin:realMargin, beRoi:beRoi, beRoiEff:beRoiEff, beAdShare:beAdShare,
+      beAdPerOrder:beAdPerOrder, realGrossPerAttempt:realGrossPerAttempt, adPerOrder:adPerOrder,
+      profitAtTarget:profitAtTarget, gmvKept:gmvKept,
+      wf:{gmv100:gmv100,kept100:kept100,refundGMV:refundGMV,cost100:cost100,ship100:ship100,retLoss100:retLoss100,fee100:fee100,kol100:kol100,ad100:ad100,net100:net100}
+    };
+  }
+  function sensitivityMatrix(base){
+    var prices=[base.price*0.9, base.price, base.price*1.1, base.price*1.2];
+    var rets=[5,10,15,20,30];
+    var grid=[];
+    for(var i=0;i<prices.length;i++){
+      var row=[];
+      for(var j=0;j<rets.length;j++){
+        var p=Object.assign({},base,{price:prices[i],retRate:rets[j]});
+        var r=calc(p);
+        row.push({price:prices[i],ret:rets[j],beRoi:r.beRoi,realMargin:r.realMargin,profit:r.realGrossPerAttempt});
+      }
+      grid.push(row);
+    }
+    return {prices:prices,rets:rets,grid:grid};
+  }
+
+  var ids=["Price","Cost","Ship","Ret","Loss","Fee","Kol","Ad","Roi"];
+  function bindPair(name, isPct){
+    var r=document.getElementById("r"+name), n=document.getElementById("n"+name), v=document.getElementById("v"+name);
+    function sync(fromRange){
+      var val=fromRange? +r.value : +n.value;
+      if(isNaN(val)) val=0;
+      r.value=val; n.value=val;
+      if(name==="Price"||name==="Cost"||name==="Ship"||name==="Loss") v.textContent="¥"+fmt(val);
+      else if(name==="Ad") v.textContent="¥"+fmt(val,0);
+      else if(name==="Roi") v.textContent=fmt(val,2);
+      else v.textContent=pct(val);
+      paint();
+    }
+    r.addEventListener("input", function(){sync(true)});
+    n.addEventListener("input", function(){sync(false)});
+  }
+  ids.forEach(function(n){ bindPair(n, n==="Ret"||n==="Fee"||n==="Kol"); });
+  function params(){
+    return {
+      price:+document.getElementById("nPrice").value,
+      cost:+document.getElementById("nCost").value,
+      ship:+document.getElementById("nShip").value,
+      retRate:+document.getElementById("nRet").value,
+      retLoss:+document.getElementById("nLoss").value,
+      feePct:+document.getElementById("nFee").value,
+      kolPct:+document.getElementById("nKol").value,
+      adBudget:+document.getElementById("nAd").value,
+      targetRoi:+document.getElementById("nRoi").value
+    };
+  }
+  function updateQuotaUI(){
+    var badge=document.getElementById("quotaBadge"), btn=document.getElementById("activateBtn");
+    if(isProUnlocked()){badge.className="quota pro";badge.textContent="已授权：专业版 (无限制)";btn.style.display="none"}
+    else{badge.className="quota";badge.textContent="试用剩余 "+getFreeQuota()+" / 3 次";btn.style.display="inline-flex"}
+  }
+  function paint(){
+    var r=calc(params());
+    var be=document.getElementById("oBeRoi");
+    be.textContent=r.beRoi>=100?"∞":fmt(r.beRoi,2)+"x";
+    be.className="metric-v "+(r.beRoi<=2.5?"warn":"good");
+    document.getElementById("oBeShare").textContent=pct(r.beAdShare);
+    document.getElementById("oSurf").textContent=pct(r.surfaceMargin);
+    var rm=document.getElementById("oReal");
+    rm.textContent=pct(r.realMargin);
+    rm.className="metric-v "+(r.realMargin<10?"warn":"good");
+    var w=r.wf, maxv=Math.max(w.gmv100,1);
+    function row(label,val,cls){
+      var wdt=Math.min(100,Math.abs(val)/maxv*100);
+      return '<div class="bar-row"><span>'+label+'</span><div class="bar"><i class="'+cls+'" style="width:'+wdt+'%"></i></div><span class="r" style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600">'+(val<0?"-":"")+fmt(Math.abs(val),0)+'</span></div>';
+    }
+    document.getElementById("waterfall").innerHTML =
+      row("成交 GMV", w.gmv100, "muted")+
+      row("有效成交", w.kept100*params().price, "green")+
+      row("退货空跑", -(w.cost100* (params().retRate/100) + w.retLoss100 + w.ship100*(params().retRate/100)), "red")+
+      row("货款成本", -w.cost100, "muted")+
+      row("快递包装", -w.ship100, "muted")+
+      row("平台扣点", -w.fee100, "muted")+
+      row("达人分佣", -w.kol100, "muted")+
+      row("广告消耗", -w.ad100, "muted")+
+      row("最终净赚", w.net100, w.net100>=0?"green":"red");
+    document.getElementById("oNetTag").textContent = "净利 "+(w.net100>=0?"+":"")+fmt(w.net100,0)+" 元";
+    document.getElementById("oNetTag").style.color = w.net100>=0?"#15803D":"#B91C1C";
+  }
+  function showMatrix(){
+    if(!consumeQuota()){
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").textContent="免费深度计算已用完，请激活专业版。";
+      updateQuotaUI(); return;
+    }
+    updateQuotaUI();
+    var m=sensitivityMatrix(params());
+    var html='<div class="matrix-wrap"><table><thead><tr><th>售价 \ 退货率</th>';
+    for(var j=0;j<m.rets.length;j++) html+='<th class="r">'+m.rets[j]+'%</th>';
+    html+='</tr></thead><tbody>';
+    for(var i=0;i<m.grid.length;i++){
+      html+='<tr><td style="font-weight:600">¥'+fmt(m.prices[i],0)+'</td>';
+      for(var j=0;j<m.grid[i].length;j++){
+        var c=m.grid[i][j];
+        var danger=c.beRoi<2 || c.profit<0;
+        html+='<td class="r '+(danger?"neg":"pos")+'" title="真实毛利 '+fmt(c.realMargin,1)+'%">'+fmt(c.beRoi,2)+'x</td>';
+      }
+      html+='</tr>';
+    }
+    html+='</tbody></table></div><p style="margin-top:10px;font-size:11.5px;color:#71717A">单元格为保本 ROI；红色表示高风险（保本 ROI&lt;2 或单笔贡献为负）。</p>';
+    document.getElementById("matrixBox").innerHTML=html;
+  }
+  function exportReport(){
+    if(!consumeQuota()){
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").textContent="免费导出已用完，请激活。";
+      updateQuotaUI(); return;
+    }
+    updateQuotaUI();
+    var p=params(), r=calc(p), m=sensitivityMatrix(p);
+    var lines=["项目,数值","售价,"+p.price,"拿货成本,"+p.cost,"快递包装,"+p.ship,"退货率%,"+p.retRate,"退货损耗,"+p.retLoss,"平台扣点%,"+p.feePct,"达人分佣%,"+p.kolPct,"投流预算,"+p.adBudget,"目标ROI,"+p.targetRoi,"保本ROI,"+r.beRoi.toFixed(4),"真实毛利率%,"+r.realMargin.toFixed(2),"表面毛利率%,"+r.surfaceMargin.toFixed(2),"100单净利,"+r.wf.net100.toFixed(2)];
+    lines.push("","敏感度矩阵保本ROI");
+    lines.push("售价\\退货率%,"+m.rets.join(","));
+    for(var i=0;i<m.grid.length;i++){
+      lines.push(m.prices[i]+","+m.grid[i].map(function(c){return c.beRoi.toFixed(3)}).join(","));
+    }
+    var blob=new Blob(["\uFEFF"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="ROI毛利沙盘_测算报告.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  document.getElementById("btnSample").addEventListener("click", function(){
+    var demo={Price:99,Cost:32,Ship:6,Ret:15,Loss:3,Fee:5,Kol:10,Ad:2000,Roi:2.5};
+    Object.keys(demo).forEach(function(k){
+      document.getElementById("r"+k).value=demo[k];
+      document.getElementById("n"+k).value=demo[k];
+      document.getElementById("r"+k).dispatchEvent(new Event("input"));
+    });
+  });
+  document.getElementById("btnReset").addEventListener("click", function(){
+    var z={Price:0,Cost:0,Ship:0,Ret:0,Loss:0,Fee:0,Kol:0,Ad:0,Roi:1};
+    Object.keys(z).forEach(function(k){
+      document.getElementById("r"+k).value=z[k];
+      document.getElementById("n"+k).value=z[k];
+      document.getElementById("r"+k).dispatchEvent(new Event("input"));
+    });
+  });
+  document.getElementById("btnMatrix").addEventListener("click", showMatrix);
+  document.getElementById("btnExport").addEventListener("click", exportReport);
+  document.getElementById("activateBtn").addEventListener("click", function(){document.getElementById("activateModal").classList.add("show");document.getElementById("modalMsg").textContent=""});
+  document.getElementById("btnModalCancel").addEventListener("click", function(){document.getElementById("activateModal").classList.remove("show")});
+  document.getElementById("btnModalOk").addEventListener("click", function(){
+    var msg=document.getElementById("modalMsg");
+    if(verifyLicenseKey(document.getElementById("licenseInput").value)){unlockPro();msg.style.color="#15803D";msg.textContent="验证通过。";updateQuotaUI();setTimeout(function(){document.getElementById("activateModal").classList.remove("show")},500)}
+    else{msg.style.color="#B91C1C";msg.textContent="激活码校验未通过。"}
+  });
+  updateQuotaUI(); paint();
+})();
+</script>
+</body>
+</html>

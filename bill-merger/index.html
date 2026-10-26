@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>账单合一 — 多平台账单合并清洗与退款冲销工具 · 图灵320</title>
+<style>
+
+:root {
+  --bg-page:#F8F9FA; --bg-surface:#FFFFFF; --bg-subtle:#FAFAFA; --bg-muted:#F4F4F5;
+  --border:#E4E4E7; --border-strong:#D4D4D8;
+  --text-primary:#18181B; --text-secondary:#52525B; --text-muted:#71717A; --text-faint:#A1A1AA;
+  --green:#15803D; --green-bg:#F0FDF4; --green-border:#BBF7D0;
+  --red:#B91C1C; --red-bg:#FEF2F2; --radius:10px; --radius-sm:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+  background:var(--bg-page);color:var(--text-primary);font-size:13px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;min-height:100vh;
+}
+.topbar{
+  background:var(--bg-surface);border-bottom:1px solid var(--border);
+  height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:20;
+}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand-name{font-size:15px;font-weight:650;letter-spacing:-0.3px}
+.brand-ver{font-size:12px;color:var(--text-muted);padding-left:12px;border-left:1px solid var(--border)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.privacy{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);
+  background:var(--bg-muted);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.quota{font-size:12px;color:var(--text-secondary);padding:5px 12px;border:1px solid var(--border);
+  border-radius:6px;background:var(--bg-surface);font-variant-numeric:tabular-nums}
+.quota.pro{color:var(--green);background:var(--green-bg);border-color:var(--green-border);font-weight:600}
+.btn{cursor:pointer;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-primary);
+  padding:7px 14px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--bg-muted);border-color:var(--border-strong)}
+.btn-primary{background:var(--text-primary);color:#fff;border-color:var(--text-primary)}
+.btn-primary:hover{background:#27272A;border-color:#27272A}
+.btn-ghost{background:var(--bg-muted);color:var(--text-secondary);border-color:var(--border);padding:4px 10px;font-size:11.5px}
+.container{max-width:1180px;margin:0 auto;padding:24px 28px 56px}
+.hero{margin-bottom:20px}
+.hero h1{font-size:22px;font-weight:650;letter-spacing:-0.4px;margin-bottom:6px}
+.hero p{color:var(--text-secondary);font-size:13.5px;max-width:640px}
+.card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.card-title{font-size:13.5px;font-weight:600}
+.drop{
+  border:1.5px dashed var(--border-strong);border-radius:8px;padding:28px 20px;text-align:center;
+  background:var(--bg-subtle);cursor:pointer;transition:border-color .15s,background .15s;
+}
+.drop:hover,.drop.dragover{border-color:var(--text-primary);background:var(--bg-muted)}
+.drop-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.drop-sub{font-size:12px;color:var(--text-muted)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-secondary);cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--text-primary);width:15px;height:15px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric-k{font-size:11px;color:var(--text-muted);display:flex;justify-content:space-between}
+.metric-v{font-size:18px;font-weight:650;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-0.3px}
+.metric-v.in{color:var(--green)}.metric-v.out{color:var(--text-primary)}.metric-s{font-size:11px;color:var(--text-faint);margin-top:3px}
+.table-wrap{overflow:auto;max-height:480px;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
+th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;font-size:11.5px;background:var(--bg-subtle);position:sticky;top:0}
+td{padding:9px 12px;border-bottom:1px solid #F4F4F5;color:var(--text-primary)}
+tr.refunded{background:#FAFAFA;color:var(--text-muted)}
+tr.refunded td{text-decoration:line-through;text-decoration-color:#D4D4D8}
+.empty{text-align:center;padding:48px 16px;color:var(--text-faint)}
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);color:var(--text-muted);background:var(--bg-muted)}
+.tag.wx{background:#F0FDF4;border-color:#BBF7D0;color:#15803D}
+.tag.ali{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+.tag.gen{background:var(--bg-muted);border-color:var(--border);color:var(--text-secondary)}
+.side-two{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+@media(max-width:900px){.side-two{grid-template-columns:1fr}}
+.list-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F4F4F5;font-size:12.5px}
+.list-row:last-child{border:0}
+.mono{font-family:"SF Mono",Menlo,Consolas,monospace}
+.key-field{width:100%;border:1px solid var(--border-strong);border-radius:6px;padding:10px 12px;
+  font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;text-transform:uppercase;outline:none;margin:10px 0}
+.key-field:focus{border-color:var(--text-primary)}
+.feedback{min-height:20px;font-size:12px;margin-bottom:8px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,24,27,.35);z-index:50;align-items:center;justify-content:center}
+.modal-backdrop.show{display:flex}
+.modal{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(420px,92vw);box-shadow:0 20px 40px rgba(0,0,0,.08)}
+.modal h3{font-size:16px;margin-bottom:8px}.modal p{font-size:12.5px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6}
+.footer-note{margin-top:20px;font-size:11.5px;color:var(--text-faint);text-align:center}
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-name">账单合一 BillMerge</div>
+      <div class="brand-ver">多平台账单合并 · 退款冲销 · 利润汇总</div>
+    </div>
+    <div class="nav-right">
+      <div class="privacy"><span class="dot"></span>本地解析 · 零上传</div>
+      <div class="quota" id="quotaBadge">试用剩余 3 / 3 次</div>
+      <button type="button" class="btn" id="activateBtn">激活专业版</button>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <h1>把微信、支付宝账单合成一张干净的利润表。</h1>
+      <p>自动识别多平台 CSV / TXT 表头，配对并冲销全额退款单，统一字段后导出可计算的流水明细。100% 浏览器本地运行。</p>
+    </section>
+    <section class="card">
+      <div class="card-head">
+        <span class="card-title">导入账单文件</span>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn-ghost" id="btnLoadSample">加载测试账单样本</button>
+          <button type="button" class="btn-ghost" id="btnClear">清空重置</button>
+        </div>
+      </div>
+      <div class="drop" id="dropZone">
+        <div class="drop-title">拖入或选择多个账单文件</div>
+        <div class="drop-sub">支持微信支付账单明细 CSV、支付宝交易明细 CSV / TXT，以及通用逗号/制表符分隔文本</div>
+      </div>
+      <input type="file" id="fileInput" accept=".csv,.txt,.tsv,.xls,text/csv,text/plain" multiple style="display:none" />
+      <div class="toolbar">
+        <label class="toggle"><input type="checkbox" id="chkNetRefund" checked /> 自动冲销全额退款单</label>
+        <span style="flex:1"></span>
+        <button type="button" class="btn" id="btnExportCsv">导出 CSV</button>
+        <button type="button" class="btn btn-primary" id="btnExportXls">导出 Excel (.xls)</button>
+      </div>
+      <div id="fileList" style="margin-top:10px;font-size:12px;color:var(--text-muted)"></div>
+    </section>
+    <section class="metrics">
+      <div class="metric"><div class="metric-k"><span>有效流入</span><span>CNY</span></div><div class="metric-v in" id="mIn">0.00</div><div class="metric-s">冲销后退款收入不计</div></div>
+      <div class="metric"><div class="metric-k"><span>有效流出</span><span>CNY</span></div><div class="metric-v out" id="mOut">0.00</div><div class="metric-s">已剔除退款原单</div></div>
+      <div class="metric"><div class="metric-k"><span>净利润</span><span>NET</span></div><div class="metric-v" id="mNet">0.00</div><div class="metric-s">流入 − 流出</div></div>
+      <div class="metric"><div class="metric-k"><span>冲销退款额</span><span>REF</span></div><div class="metric-v" id="mRef" style="color:var(--text-muted)">0.00</div><div class="metric-s" id="mRefSub">0 笔退款</div></div>
+      <div class="metric"><div class="metric-k"><span>保留笔数</span><span>ROWS</span></div><div class="metric-v" id="mRows">0</div><div class="metric-s" id="mRowsSub">等待导入</div></div>
+    </section>
+    <section class="side-two">
+      <div class="card" style="margin:0">
+        <div class="card-head"><span class="card-title">合并明细</span><span class="tag" id="tableMeta">0 行</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th><th>交易时间</th><th>渠道</th><th>交易对方</th><th>商品说明</th>
+              <th>收/支</th><th style="text-align:right">金额</th><th>状态</th><th>净额</th>
+            </tr></thead>
+            <tbody id="tbody"><tr><td colspan="9" class="empty">暂无数据。请导入账单文件，或点击「加载测试账单样本」。</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-head"><span class="card-title">往来对方 TOP</span></div>
+        <div id="topList"><div class="empty" style="padding:32px 8px">导入后显示净额排行</div></div>
+      </div>
+    </section>
+    <p class="footer-note">图灵320 · 账单合一 BillMerge · 纯本地运行 · 激活码格式 TL320-XXXX-XXXX-XXXX</p>
+  </main>
+  <div class="modal-backdrop" id="activateModal">
+    <div class="modal">
+      <h3>激活专业版</h3>
+      <p>输入 16 位授权码（TL320-XXXX-XXXX-XXXX）。验证在本地完成；与流光账单及其他矩阵工具共用同一套卡密。</p>
+      <input type="text" class="key-field" id="licenseInput" placeholder="TL320-XXXX-XXXX-XXXX" />
+      <div class="feedback" id="modalMsg"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button type="button" class="btn" id="btnModalCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="btnModalOk">确认激活</button>
+      </div>
+    </div>
+  </div>
+<script>
+(function () {
+
+  var CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var STORAGE_KEY_PRO = "tl320_universal_pro_licensed_v1";
+  var STORAGE_KEY_PRO_LEGACY = "tl320_flowsheet_pro_licensed_v1";
+  var STORAGE_KEY_QUOTA = "tl320_billmerge_free_left_v1";
+
+  function safeGetStorage(k) {
+    try { return window.localStorage ? window.localStorage.getItem(k) : null; } catch (e) { return null; }
+  }
+  function safeSetStorage(k, v) {
+    try { if (window.localStorage) window.localStorage.setItem(k, v); } catch (e) {}
+  }
+  function computeChecksum(part1, part2) {
+    var secret = "Tuling320_Secret_2026";
+    var str = "TL320-" + part1 + "-" + part2 + "-" + secret;
+    var h1 = 0x811c9dc5 >>> 0;
+    var h2 = 0x01000193 >>> 0;
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+      h2 = (Math.imul(h2 ^ c, 0x5bd1e995) + i * 31) >>> 0;
+    }
+    return CHARS[h1 % 32] + CHARS[(h1 >>> 8) % 32] + CHARS[h2 % 32] + CHARS[(h2 >>> 8) % 32];
+  }
+  function verifyLicenseKey(key) {
+    if (!key || typeof key !== "string") return false;
+    var clean = key.trim().toUpperCase();
+    var match = clean.match(/^TL320-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);
+    if (!match) return false;
+    return computeChecksum(match[1], match[2]) === match[3];
+  }
+  function isProUnlocked() {
+    return safeGetStorage(STORAGE_KEY_PRO) === "true" || safeGetStorage(STORAGE_KEY_PRO_LEGACY) === "true";
+  }
+  function unlockPro() {
+    safeSetStorage(STORAGE_KEY_PRO, "true");
+    safeSetStorage(STORAGE_KEY_PRO_LEGACY, "true");
+  }
+  function getFreeQuota() {
+    var val = safeGetStorage(STORAGE_KEY_QUOTA);
+    if (val === null) { safeSetStorage(STORAGE_KEY_QUOTA, "3"); return 3; }
+    var n = parseInt(val, 10);
+    return isNaN(n) ? 3 : Math.max(0, n);
+  }
+  function consumeQuota() {
+    if (isProUnlocked()) return true;
+    var left = getFreeQuota();
+    if (left <= 0) return false;
+    safeSetStorage(STORAGE_KEY_QUOTA, String(left - 1));
+    return true;
+  }
+
+
+  function formatMoney(n) {
+    var val = Number(n || 0);
+    return val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function parseAmount(s) {
+    if (s == null) return 0;
+    var t = String(s).replace(/[￥¥,\s]/g, "").replace(/元/g, "");
+    var n = parseFloat(t);
+    return isNaN(n) ? 0 : n;
+  }
+  function detectChannel(headerLine, bodyText) {
+    var h = (headerLine || "") + "\n" + (bodyText || "").slice(0, 800);
+    if (/微信支付|微信/.test(h) && /交易时间/.test(h)) return "微信";
+    if (/支付宝|Alipay|交易创建时间|成功退款/.test(h)) return "支付宝";
+    return "通用";
+  }
+  function splitCSVLine(line) {
+    var out = [], cur = "", inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if ((ch === "," || ch === "\t") && !inQ) {
+        out.push(cur); cur = "";
+      } else cur += ch;
+    }
+    out.push(cur);
+    return out.map(function (x) { return x.trim(); });
+  }
+  function findHeaderIndex(lines) {
+    for (var i = 0; i < lines.length; i++) {
+      var L = lines[i];
+      if (/交易时间/.test(L) && (/收\/支|收\/支|金额/.test(L))) return i;
+      if (/交易创建时间|付款时间/.test(L) && /交易对方/.test(L)) return i;
+      if (/^---+/.test(L) && i + 1 < lines.length && /交易时间/.test(lines[i + 1])) return i + 1;
+    }
+    return -1;
+  }
+  function mapHeaders(cols) {
+    var map = {};
+    for (var i = 0; i < cols.length; i++) {
+      var c = cols[i].replace(/\s/g, "");
+      if (/交易时间|交易创建时间|付款时间|时间/.test(c) && map.time == null) map.time = i;
+      else if (/交易对方|对方|商户/.test(c) && map.counterparty == null) map.counterparty = i;
+      else if (/商品|商品说明|商品名称|描述|摘要/.test(c) && map.desc == null) map.desc = i;
+      else if (/^收\/支$|收支|收\/支/.test(c) && map.dir == null) map.dir = i;
+      else if (/金额|金额\(元\)|金额（元）/.test(c) && map.amount == null) map.amount = i;
+      else if (/当前状态|交易状态|资金状态|状态/.test(c) && map.status == null) map.status = i;
+      else if (/交易单号|交易号|订单号|商户单号|商家订单号/.test(c) && map.orderId == null) map.orderId = i;
+      else if (/交易类型|类型|交易方式|支付方式/.test(c) && map.type == null) map.type = i;
+      else if (/成功退款|退款金额/.test(c) && map.refundAmt == null) map.refundAmt = i;
+      else if (/渠道|来源|平台/.test(c) && map.channel == null) map.channel = i;
+    }
+    return map;
+  }
+  function normalizeDir(raw, amount) {
+    var s = String(raw || "");
+    if (/收入|入账|\+|收/.test(s) && !/支出/.test(s)) return "收入";
+    if (/支出|借出|\-|支/.test(s)) return "支出";
+    if (amount < 0) return "支出";
+    return "收入";
+  }
+  function isRefundStatus(status, desc, type) {
+    var s = (status || "") + " " + (desc || "") + " " + (type || "");
+    return /已全额退款|退款成功|退款|已退款|冲正|Refund/i.test(s);
+  }
+  function parseBillText(raw, forcedChannel) {
+    var text = (raw || "").replace(/^\uFEFF/, "");
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length; });
+    if (!lines.length) return [];
+    var hi = findHeaderIndex(lines);
+    var headerLine = hi >= 0 ? lines[hi] : lines[0];
+    var channel = forcedChannel || detectChannel(headerLine, text);
+    var delim = headerLine.indexOf("\t") >= 0 ? "\t" : ",";
+    var headers = delim === "\t" ? headerLine.split("\t") : splitCSVLine(headerLine);
+    var map = mapHeaders(headers);
+    var start = hi >= 0 ? hi + 1 : 1;
+    var rows = [];
+    for (var i = start; i < lines.length; i++) {
+      var line = lines[i];
+      if (/^---+/.test(line) || /合计|总计|共\d+笔/.test(line)) continue;
+      var cols = delim === "\t" ? line.split("\t") : splitCSVLine(line);
+      if (cols.length < 3) continue;
+      var time = map.time != null ? cols[map.time] : (cols[0] || "");
+      if (!/\d{4}/.test(time) && !/\d{1,2}[\/\-月]/.test(time)) continue;
+      var amount = parseAmount(map.amount != null ? cols[map.amount] : cols[cols.length - 3]);
+      var dirRaw = map.dir != null ? cols[map.dir] : "";
+      var dir = normalizeDir(dirRaw, amount);
+      amount = Math.abs(amount);
+      var status = map.status != null ? (cols[map.status] || "") : "";
+      var desc = map.desc != null ? (cols[map.desc] || "") : "";
+      var type = map.type != null ? (cols[map.type] || "") : "";
+      var counterparty = map.counterparty != null ? (cols[map.counterparty] || "") : "";
+      var orderId = map.orderId != null ? (cols[map.orderId] || "") : "";
+      var refundHint = map.refundAmt != null ? parseAmount(cols[map.refundAmt]) : 0;
+      var isRefund = isRefundStatus(status, desc, type) || refundHint > 0;
+      var signed = dir === "收入" ? amount : -amount;
+      if (isRefund && dir === "收入") {
+        /* refund inflow often nets prior expense — keep as refund marker */
+      }
+      rows.push({
+        time: time,
+        channel: channel,
+        counterparty: counterparty || "—",
+        desc: desc || type || "—",
+        dir: dir,
+        amount: amount,
+        status: status || (isRefund ? "退款" : "成功"),
+        orderId: orderId,
+        isRefund: isRefund,
+        signed: signed,
+        net: signed,
+        kept: true
+      });
+    }
+    return rows;
+  }
+  function applyRefundNetting(rows, enabled) {
+    var out = rows.map(function (r) {
+      return {
+        time: r.time, channel: r.channel, counterparty: r.counterparty, desc: r.desc,
+        dir: r.dir, amount: r.amount, status: r.status, orderId: r.orderId,
+        isRefund: r.isRefund, signed: r.signed, net: r.signed, kept: true
+      };
+    });
+    if (!enabled) return out;
+    var used = {};
+    for (var i = 0; i < out.length; i++) {
+      if (!out[i].isRefund) continue;
+      out[i].kept = false;
+      out[i].net = 0;
+      var matched = false;
+      /* prefer order id match */
+      if (out[i].orderId) {
+        for (var j = 0; j < out.length; j++) {
+          if (j === i || used[j] || out[j].isRefund) continue;
+          if (out[j].orderId && out[j].orderId === out[i].orderId && Math.abs(out[j].amount - out[i].amount) < 0.01) {
+            out[j].kept = false; out[j].net = 0; used[j] = true; matched = true; break;
+          }
+        }
+      }
+      if (!matched) {
+        for (var k = 0; k < out.length; k++) {
+          if (k === i || used[k] || out[k].isRefund) continue;
+          if (out[k].dir === "支出" && Math.abs(out[k].amount - out[i].amount) < 0.01 &&
+              (out[k].counterparty === out[i].counterparty || out[k].desc === out[i].desc)) {
+            out[k].kept = false; out[k].net = 0; used[k] = true; matched = true; break;
+          }
+        }
+      }
+      /* if refund is recorded as income without pairing, zero it anyway when filtering */
+      if (!matched && out[i].dir === "收入") {
+        out[i].kept = false; out[i].net = 0;
+      }
+    }
+    return out;
+  }
+  function summarize(rows) {
+    var inflow = 0, outflow = 0, refundAmt = 0, keptIn = 0, keptOut = 0;
+    var parties = {};
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      if (r.isRefund) refundAmt += r.amount;
+      if (!r.kept) continue;
+      if (r.dir === "收入") { keptIn += r.amount; inflow += r.amount; }
+      else { keptOut += r.amount; outflow += r.amount; }
+      var p = r.counterparty || "其他";
+      if (!parties[p]) parties[p] = 0;
+      parties[p] += r.dir === "收入" ? r.amount : -r.amount;
+    }
+    var top = Object.keys(parties).map(function (k) { return { name: k, net: parties[k] }; })
+      .sort(function (a, b) { return Math.abs(b.net) - Math.abs(a.net); }).slice(0, 8);
+    return {
+      inflow: inflow, outflow: outflow, net: inflow - outflow,
+      refundAmt: refundAmt, count: rows.length,
+      keptCount: rows.filter(function (r) { return r.kept; }).length,
+      refundCount: rows.filter(function (r) { return r.isRefund; }).length,
+      top: top
+    };
+  }
+  function rowsToTSV(rows) {
+    var lines = ["交易时间\t渠道来源\t交易对方\t商品说明\t收/支\t金额(元)\t交易状态\t是否退款\t是否保留\t净额计算"];
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      lines.push([
+        r.time, r.channel, r.counterparty, r.desc, r.dir,
+        r.amount.toFixed(2), r.status, r.isRefund ? "是" : "否",
+        r.kept ? "保留" : "已冲销",
+        r.kept ? (r.dir === "收入" ? r.amount.toFixed(2) : (-r.amount).toFixed(2)) : "0.00"
+      ].join("\t"));
+    }
+    return lines.join("\n");
+  }
+  var SAMPLE_BILL = [
+    "交易时间,交易类型,交易对方,商品,收/支,金额(元),支付方式,当前状态,交易单号,商户单号,备注",
+    "2026-09-02 10:21:03,商户消费,文具优选旗舰店,A5笔记本套装,支出,48.00,零钱,支付成功,420000100120260902001,M20260902001,",
+    "2026-09-03 14:08:44,商户消费,云打印机耗材,硒鼓CF230A,支出,129.00,零钱,支付成功,420000100120260903002,M20260903002,",
+    "2026-09-03 18:22:11,退款,云打印机耗材,硒鼓CF230A,收入,129.00,零钱,已全额退款,420000100120260903002,M20260903002,全额退款",
+    "2026-09-05 09:00:00,转账,张三设计工作室,九月设计尾款,支出,2800.00,零钱,支付成功,420000100120260905003,M20260905003,",
+    "2026-09-08 11:33:20,二维码收款,街边花店客户,鲜花定金,收入,200.00,零钱,支付成功,420000100120260908004,M20260908004,",
+    "2026-09-12 16:45:02,商户消费,快递包装批发,气泡袋100只,支出,36.50,零钱,支付成功,420000100120260912005,M20260912005,",
+    "2026-09-15 20:10:18,商户消费,某平台店铺,测试拍下退款单,支出,59.90,零钱,支付成功,420000100120260915006,M20260915006,",
+    "2026-09-16 08:01:55,退款,某平台店铺,测试拍下退款单,收入,59.90,零钱,退款成功,420000100120260915006,M20260915006,",
+    "2026-09-20 13:27:40,转账,李四,货款结算,收入,5600.00,零钱,支付成功,420000100120260920007,M20260920007,",
+    "交易创建时间,交易对方,商品名称,收/支,金额（元）,交易状态,交易号",
+    "2026-09-04 12:00:00,办公耗材馆,文件夹十只装,支出,22.80,交易成功,2026090422001",
+    "2026-09-10 09:15:33,个体户王五,定制纸袋定金,收入,800.00,交易成功,2026091022002",
+    "2026-09-18 17:40:00,某数码配件店,手机支架,支出,39.00,交易成功,2026091822003",
+    "2026-09-19 10:05:00,某数码配件店,手机支架,收入,39.00,退款成功,2026091822003"
+  ].join("\n");
+
+  var rawRows = [];
+  var viewRows = [];
+  function updateQuotaUI() {
+    var badge = document.getElementById("quotaBadge");
+    var btn = document.getElementById("activateBtn");
+    if (isProUnlocked()) {
+      badge.className = "quota pro"; badge.textContent = "已授权：专业版 (无限制)";
+      if (btn) btn.style.display = "none";
+    } else {
+      badge.className = "quota"; badge.textContent = "试用剩余 " + getFreeQuota() + " / 3 次";
+      if (btn) btn.style.display = "inline-flex";
+    }
+  }
+  function channelTag(ch) {
+    if (ch.indexOf("微") >= 0) return '<span class="tag wx">微信</span>';
+    if (ch.indexOf("支") >= 0) return '<span class="tag ali">支付宝</span>';
+    return '<span class="tag gen">' + ch + '</span>';
+  }
+  function render() {
+    var netting = document.getElementById("chkNetRefund").checked;
+    viewRows = applyRefundNetting(rawRows, netting);
+    var s = summarize(viewRows);
+    document.getElementById("mIn").textContent = "+" + formatMoney(s.inflow);
+    document.getElementById("mOut").textContent = "-" + formatMoney(s.outflow);
+    document.getElementById("mNet").textContent = (s.net >= 0 ? "+" : "") + formatMoney(s.net);
+    document.getElementById("mNet").style.color = s.net >= 0 ? "#15803D" : "#18181B";
+    document.getElementById("mRef").textContent = formatMoney(s.refundAmt);
+    document.getElementById("mRefSub").textContent = s.refundCount + " 笔退款标记";
+    document.getElementById("mRows").textContent = String(s.keptCount);
+    document.getElementById("mRowsSub").textContent = "共 " + s.count + " 行 · 冲销 " + (s.count - s.keptCount);
+    document.getElementById("tableMeta").textContent = s.count + " 行";
+    var tb = document.getElementById("tbody");
+    if (!viewRows.length) {
+      tb.innerHTML = '<tr><td colspan="9" class="empty">暂无数据。请导入账单文件，或点击「加载测试账单样本」。</td></tr>';
+    } else {
+      var html = "";
+      for (var i = 0; i < viewRows.length; i++) {
+        var r = viewRows[i];
+        var netStr = r.kept ? ((r.dir === "收入" ? "+" : "-") + formatMoney(r.amount)) : "0.00";
+        html += '<tr class="' + (r.kept ? "" : "refunded") + '"><td>' + (i+1) + '</td><td class="mono">' + r.time +
+          '</td><td>' + channelTag(r.channel) + '</td><td>' + r.counterparty + '</td><td>' + r.desc +
+          '</td><td>' + r.dir + '</td><td style="text-align:right;font-weight:600">' + formatMoney(r.amount) +
+          '</td><td>' + r.status + '</td><td style="text-align:right;font-weight:600;color:' +
+          (r.kept && r.dir === "收入" ? "#15803D" : "#18181B") + '">' + netStr + '</td></tr>';
+      }
+      tb.innerHTML = html;
+    }
+    var top = document.getElementById("topList");
+    if (!s.top.length) top.innerHTML = '<div class="empty" style="padding:32px 8px">导入后显示净额排行</div>';
+    else top.innerHTML = s.top.map(function (t) {
+      return '<div class="list-row"><span>' + t.name + '</span><span class="mono" style="font-weight:600;color:' +
+        (t.net >= 0 ? "#15803D" : "#18181B") + '">' + (t.net >= 0 ? "+" : "") + formatMoney(t.net) + '</span></div>';
+    }).join("");
+  }
+  function ingestText(text, name) {
+    var parsed = parseBillText(text);
+    if (!parsed.length) { alert("未能从「" + (name || "文本") + "」中识别账单行。"); return; }
+    rawRows = rawRows.concat(parsed); render();
+  }
+  function readFile(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var u8 = new Uint8Array(e.target.result);
+      var text = "";
+      try {
+        if (u8.length >= 2 && u8[0] === 0xFF && u8[1] === 0xFE) text = new TextDecoder("utf-16le").decode(u8);
+        else text = new TextDecoder("utf-8").decode(u8);
+      } catch (err) { text = new TextDecoder("utf-8").decode(u8); }
+      var n = parseBillText(text).length;
+      ingestText(text, file.name);
+      var fl = document.getElementById("fileList");
+      fl.textContent = (fl.textContent ? fl.textContent + " · " : "") + file.name + " (+" + n + ")";
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  function guardExport(fn) {
+    if (!viewRows.length) { alert("请先导入账单数据。"); return; }
+    if (!consumeQuota()) {
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").style.color = "#52525B";
+      document.getElementById("modalMsg").textContent = "3 次免费导出已用完，请输入激活码解锁。";
+      updateQuotaUI(); return;
+    }
+    updateQuotaUI(); fn();
+  }
+  function downloadBlob(content, filename, mime) {
+    var blob = new Blob([content], { type: mime });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a"); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1200);
+  }
+  document.getElementById("btnExportCsv").addEventListener("click", function () {
+    guardExport(function () {
+      var tsv = rowsToTSV(viewRows.filter(function (r) { return r.kept; }));
+      downloadBlob("\uFEFF" + tsv.replace(/\t/g, ","), "账单合一_清洗结果.csv", "text/csv;charset=utf-8");
+    });
+  });
+  document.getElementById("btnExportXls").addEventListener("click", function () {
+    guardExport(function () {
+      var kept = viewRows.filter(function (r) { return r.kept; });
+      var html = '<html><head><meta charset="UTF-8"></head><body><table border="1"><tr><th>交易时间</th><th>渠道来源</th><th>交易对方</th><th>商品说明</th><th>收/支</th><th>金额(元)</th><th>交易状态</th><th>净额</th></tr>';
+      for (var i = 0; i < kept.length; i++) {
+        var r = kept[i];
+        var net = r.dir === "收入" ? r.amount.toFixed(2) : (-r.amount).toFixed(2);
+        html += "<tr><td>"+r.time+"</td><td>"+r.channel+"</td><td>"+r.counterparty+"</td><td>"+r.desc+"</td><td>"+r.dir+"</td><td>"+r.amount.toFixed(2)+"</td><td>"+r.status+"</td><td>"+net+"</td></tr>";
+      }
+      html += "</table></body></html>";
+      downloadBlob(html, "账单合一_清洗结果.xls", "application/vnd.ms-excel");
+    });
+  });
+  function init() {
+    updateQuotaUI();
+    var drop = document.getElementById("dropZone");
+    var fi = document.getElementById("fileInput");
+    drop.addEventListener("click", function () { fi.click(); });
+    drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("dragover"); });
+    drop.addEventListener("dragleave", function () { drop.classList.remove("dragover"); });
+    drop.addEventListener("drop", function (e) {
+      e.preventDefault(); drop.classList.remove("dragover");
+      for (var i = 0; i < e.dataTransfer.files.length; i++) readFile(e.dataTransfer.files[i]);
+    });
+    fi.addEventListener("change", function () {
+      for (var i = 0; i < fi.files.length; i++) readFile(fi.files[i]); fi.value = "";
+    });
+    document.getElementById("chkNetRefund").addEventListener("change", render);
+    document.getElementById("btnClear").addEventListener("click", function () {
+      rawRows = []; viewRows = []; document.getElementById("fileList").textContent = ""; render();
+    });
+    document.getElementById("btnLoadSample").addEventListener("click", function () {
+      rawRows = []; document.getElementById("fileList").textContent = "测试样本";
+      ingestText(SAMPLE_BILL, "测试样本");
+    });
+    document.getElementById("activateBtn").addEventListener("click", function () {
+      document.getElementById("activateModal").classList.add("show");
+      document.getElementById("modalMsg").textContent = "";
+    });
+    document.getElementById("btnModalCancel").addEventListener("click", function () {
+      document.getElementById("activateModal").classList.remove("show");
+    });
+    document.getElementById("btnModalOk").addEventListener("click", function () {
+      var msg = document.getElementById("modalMsg");
+      if (verifyLicenseKey(document.getElementById("licenseInput").value)) {
+        unlockPro(); msg.style.color = "#15803D"; msg.textContent = "验证通过，已解锁专业版。";
+        updateQuotaUI(); setTimeout(function () { document.getElementById("activateModal").classList.remove("show"); }, 600);
+      } else { msg.style.color = "#B91C1C"; msg.textContent = "激活码校验未通过。"; }
+    });
+    render();
+  }
+  init();
+})();
+</script>
+</body>
+</html>
