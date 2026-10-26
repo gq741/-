@@ -510,12 +510,11 @@
         </div>
       </label>
 
-      <div class="sample-switcher-wrap">
-        <div class="sample-label">预设演示账单（点击切换查看解析与验算效果）：</div>
-        <div class="segmented">
-          <button class="seg-btn active" id="btnSampleCmb" onclick="loadSample('cmb')">招商银行个人流水</button>
-          <button class="seg-btn" id="btnSampleIcbc" onclick="loadSample('icbc')">工商银行对公流水 (含漏页检测)</button>
-          <button class="seg-btn" id="btnSampleWx" onclick="loadSample('wx')">微信/支付宝经营流水</button>
+      <div class="sample-switcher-wrap" style="display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:8px;">
+        <div class="sample-label" id="currentFileBadge" style="margin-bottom:0; color:var(--text-secondary);">当前状态：尚未导入 PDF 文件</div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn" onclick="document.getElementById('pdfFileInput').click()">选择本地 PDF</button>
+          <button type="button" class="btn" id="clearDataBtn" onclick="clearData()" style="display:none;">清空当前数据</button>
         </div>
       </div>
     </section>
@@ -524,27 +523,27 @@
     <section class="metrics-grid">
       <div class="metric-cell">
         <div class="metric-k"><span>期间总流入 (收入)</span><span>CNY</span></div>
-        <div class="metric-v num-in" id="statTotalIn">+0.00</div>
-        <div class="metric-s" id="statInCount">0 笔收入</div>
+        <div class="metric-v" id="statTotalIn">0.00</div>
+        <div class="metric-s" id="statInCount">0 笔收入记录</div>
       </div>
       <div class="metric-cell">
         <div class="metric-k"><span>期间总流出 (支出)</span><span>CNY</span></div>
-        <div class="metric-v num-out" id="statTotalOut">-0.00</div>
-        <div class="metric-s" id="statOutCount">0 笔支出</div>
+        <div class="metric-v" id="statTotalOut">0.00</div>
+        <div class="metric-s" id="statOutCount">0 笔支出记录</div>
       </div>
       <div class="metric-cell">
         <div class="metric-k"><span>期间净现金流</span><span>NET</span></div>
-        <div class="metric-v" id="statNet">+0.00</div>
-        <div class="metric-s" id="statPeriod">-</div>
+        <div class="metric-v" id="statNet">0.00</div>
+        <div class="metric-s" id="statPeriod">暂未导入流水</div>
       </div>
       <div class="metric-cell">
         <div class="metric-k"><span>解析交易行数</span><span>ROWS</span></div>
         <div class="metric-v" id="statTotalRows">0</div>
-        <div class="metric-s" id="statSourceTitle">-</div>
+        <div class="metric-s" id="statSourceTitle">等待导入 PDF 文件</div>
       </div>
       <div class="metric-cell">
         <div class="metric-k"><span>余额连续性校验</span><span>AUDIT</span></div>
-        <div class="metric-v audit-ok" id="statAuditStatus">全部校验通过</div>
+        <div class="metric-v" id="statAuditStatus" style="color:var(--text-muted);">等待导入核验</div>
         <div class="metric-s" id="statAuditDesc">上期余额 + 收入 - 支出 = 本期余额</div>
       </div>
     </section>
@@ -554,7 +553,7 @@
       <div class="panel">
         <div class="panel-head">
           <span class="panel-title">PDF 原始文本行坐标提取流</span>
-          <span class="panel-meta" id="rawPageTag">2 页</span>
+          <span class="panel-meta" id="rawPageTag">0 页</span>
         </div>
         <div class="raw-stream" id="rawTextBox"></div>
       </div>
@@ -731,58 +730,7 @@
       }
     }
 
-    const SAMPLES = {
-      cmb: {
-        title: "招商银行个人储蓄卡交易流水.pdf",
-        pages: "共 2 页",
-        rawHeader: `CMB STATEMENT | 户名：林知夏 | 账号：6214 **** **** 8821 | 币种：CNY`,
-        rows: [
-          { date: "2026-10-01 09:15", summary: "银联快捷支付-星巴克咖啡", cat: "生活消费", inAmt: 0, outAmt: 38.00, bal: 42560.00, peer: "上海星巴克咖啡经营有限公司" },
-          { date: "2026-10-03 14:22", summary: "朝朝宝转出至活期账户", cat: "转账往来", inAmt: 5000.00, outAmt: 0, bal: 47560.00, peer: "招银理财有限责任公司" },
-          { date: "2026-10-05 18:40", summary: "财付通-美团买菜平台消费", cat: "生活消费", inAmt: 0, outAmt: 162.50, bal: 47397.50, peer: "深圳美团科技有限公司" },
-          { date: "2026-10-08 10:00", summary: "房屋租赁定金及月租代扣", cat: "房租物业", inAmt: 0, outAmt: 4500.00, bal: 42897.50, peer: "上海自如资产管理有限公司" },
-          { date: "2026-10-10 11:30", summary: "代发工资-10月税后薪资", cat: "工资薪金", inAmt: 26800.00, outAmt: 0, bal: 69697.50, peer: "上海星云互动科技有限公司" },
-          { date: "2026-10-12 16:05", summary: "手机银行跨行转出-归还往来款", cat: "转账往来", inAmt: 0, outAmt: 3000.00, bal: 66697.50, peer: "陈默 (建设银行 6217****4012)" },
-          { date: "2026-10-15 08:30", summary: "个人住房按揭贷款自动扣款", cat: "房租物业", inAmt: 0, outAmt: 6200.00, bal: 60497.50, peer: "招商银行上海分行个贷中心" },
-          { date: "2026-10-18 20:14", summary: "支付宝-盒马鲜生门店消费", cat: "生活消费", inAmt: 0, outAmt: 297.50, bal: 60200.00, peer: "上海盒马网络科技有限公司" },
-          { date: "2026-10-20 15:00", summary: "设计咨询劳务费汇入", cat: "经营收款", inAmt: 8500.00, outAmt: 0, bal: 68700.00, peer: "杭州极光品牌设计事务所" },
-          { date: "2026-10-22 19:45", summary: "京东商城-办公设备采购", cat: "生活消费", inAmt: 0, outAmt: 1200.00, bal: 67500.00, peer: "北京京东世纪贸易有限公司" },
-          { date: "2026-10-24 12:10", summary: "结息入账-活期季度结息", cat: "工资薪金", inAmt: 42.80, outAmt: 0, bal: 67542.80, peer: "招商银行应付利息专户" },
-          { date: "2026-10-25 17:30", summary: "特约商户收款-小红书店铺结算", cat: "经营收款", inAmt: 3457.20, outAmt: 0, bal: 71000.00, peer: "行吟信息科技(上海)有限公司" }
-        ]
-      },
-      icbc: {
-        title: "工商银行企业基本户对公流水.pdf",
-        pages: "共 4 页",
-        rawHeader: `ICBC CORPORATE | 杭州图灵数智科技有限公司 | 1202 0211 0990 **** 318`,
-        rows: [
-          { date: "2026-10-02 10:12", summary: "网银跨行汇款-首期软件开发款", cat: "货款往来", inAmt: 120000.00, outAmt: 0, bal: 470000.00, peer: "宁波远洋跨境贸易有限公司" },
-          { date: "2026-10-06 14:00", summary: "电子缴税-9月增值税及附加税", cat: "税费社保", inAmt: 0, outAmt: 18450.00, bal: 451550.00, peer: "国家金库杭州市中心支库" },
-          { date: "2026-10-09 16:30", summary: "对公转账-云服务器年费采购", cat: "货款往来", inAmt: 0, outAmt: 12550.00, bal: 439000.00, peer: "阿里云计算有限公司" },
-          { date: "2026-10-12 09:30", summary: "社保统筹代扣-员工五险一金", cat: "税费社保", inAmt: 0, outAmt: 24000.00, bal: 415000.00, peer: "杭州市社会保险管理中心" },
-          { date: "2026-10-15 11:20", summary: "电汇入账-二期系统验收尾款", cat: "货款往来", inAmt: 85000.00, outAmt: 0, bal: 500000.00, peer: "苏州精密智造股份有限公司" },
-          { date: "2026-10-19 15:45", summary: "外包设计采购费 (此行前漏记20,000)", cat: "货款往来", inAmt: 0, outAmt: 35000.00, bal: 445000.00, peer: "上海视觉文化传播中心" },
-          { date: "2026-10-22 10:05", summary: "园区季度物业及水电费", cat: "房租物业", inAmt: 0, outAmt: 15000.00, bal: 430000.00, peer: "杭州未来科技城物业服务有限公司" },
-          { date: "2026-10-25 16:50", summary: "网银汇入-年度软件订阅费", cat: "经营收款", inAmt: 68000.00, outAmt: 0, bal: 498000.00, peer: "深圳前海星辰跨境电商有限公司" }
-        ]
-      },
-      wx: {
-        title: "微信与支付宝个人经营混合流水.pdf",
-        pages: "共 3 页",
-        rawHeader: `WECHAT & ALIPAY | 编号：WX202610268831 | 实名主体：陈景行`,
-        rows: [
-          { date: "2026-10-10 08:15", summary: "经营收款-定制设计服务订单#01", cat: "经营收款", inAmt: 299.00, outAmt: 0, bal: 15299.00, peer: "微信用户 (尾号0921)" },
-          { date: "2026-10-11 10:42", summary: "闲鱼自动发货订单批量结算", cat: "经营收款", inAmt: 1495.00, outAmt: 0, bal: 16794.00, peer: "支付宝-闲鱼担保交易结算" },
-          { date: "2026-10-13 13:20", summary: "顺丰速运月结运费扣款", cat: "货款往来", inAmt: 0, outAmt: 394.00, bal: 16400.00, peer: "顺丰速运集团财务结算中心" },
-          { date: "2026-10-15 19:08", summary: "小红书店铺订单结算提现", cat: "经营收款", inAmt: 4680.00, outAmt: 0, bal: 21080.00, peer: "行吟信息科技(上海)有限公司" },
-          { date: "2026-10-18 11:00", summary: "支付兼职视频剪辑劳务费", cat: "转账往来", inAmt: 0, outAmt: 1200.00, bal: 19880.00, peer: "王小羽 (138****5521)" },
-          { date: "2026-10-21 21:35", summary: "私域咨询年费会员转账汇总", cat: "经营收款", inAmt: 7992.00, outAmt: 0, bal: 27872.00, peer: "企业微信客户收款汇总" },
-          { date: "2026-10-24 09:50", summary: "API算力充值及云存储续费", cat: "生活消费", inAmt: 0, outAmt: 472.00, bal: 27400.00, peer: "深度求索人工智能基础技术公司" }
-        ]
-      }
-    };
-
-    let currentData = { title: "", pages: "", rawHeader: "", rows: [] };
+    let currentData = { title: "", pages: "0 页", rawHeader: "", rows: [], rawLines: [] };
 
     function formatMoney(n) {
       return Number(n || 0).toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -798,29 +746,38 @@
       });
     }
 
-    function loadSample(key) {
-      document.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active"));
-      if (key === "cmb") document.getElementById("btnSampleCmb").classList.add("active");
-      if (key === "icbc") document.getElementById("btnSampleIcbc").classList.add("active");
-      if (key === "wx") document.getElementById("btnSampleWx").classList.add("active");
-
-      const s = SAMPLES[key];
-      currentData = {
-        title: s.title,
-        pages: s.pages,
-        rawHeader: s.rawHeader,
-        rows: auditRows(s.rows)
-      };
+    function clearData() {
+      currentData = { title: "", pages: "0 页", rawHeader: "", rows: [], rawLines: [] };
+      const fileInput = document.getElementById("pdfFileInput");
+      if (fileInput) fileInput.value = "";
       renderAll();
     }
 
     function renderAll() {
-      document.getElementById("rawPageTag").textContent = currentData.pages;
-      const rawLines = currentData.rows.map((r, i) => {
-        const signStr = r.inAmt > 0 ? `+${r.inAmt.toFixed(2)}` : `-${r.outAmt.toFixed(2)}`;
-        return `<div class="raw-item"><span class="raw-coord">Y:${740 - i * 42}</span>${r.date.slice(0,10)}  ${r.summary}  ${signStr}  余额:${r.bal.toFixed(2)}</div>`;
-      }).join("");
-      document.getElementById("rawTextBox").innerHTML = `<div style="padding-bottom:8px; margin-bottom:8px; border-bottom:1px solid #E4E4E7; font-weight:600; color:#18181B;">${currentData.rawHeader}</div>${rawLines}`;
+      const hasFile = Boolean(currentData.title);
+      const hasRows = currentData.rows.length > 0;
+
+      document.getElementById("rawPageTag").textContent = currentData.pages || "0 页";
+      const fileBadge = document.getElementById("currentFileBadge");
+      const clearBtn = document.getElementById("clearDataBtn");
+      if (fileBadge) {
+        fileBadge.textContent = hasFile ? `已导入：${currentData.title}` : "当前状态：尚未导入 PDF 文件";
+      }
+      if (clearBtn) {
+        clearBtn.style.display = hasFile ? "inline-flex" : "none";
+      }
+
+      if (!hasFile) {
+        document.getElementById("rawTextBox").innerHTML = `<div style="padding:48px 16px; text-align:center; color:var(--text-muted); font-size:12px; line-height:1.8;">尚未导入 PDF 文件。<br/>在上方选择或拖入银行流水 PDF 后，此处将按页面 Y 坐标展示提取到的原始文本行。</div>`;
+      } else {
+        const rawList = (currentData.rawLines && currentData.rawLines.length > 0)
+          ? currentData.rawLines.map(item => `<div class="raw-item"><span class="raw-coord">P${item.page}·Y:${Math.round(item.y)}</span>${item.text}</div>`).join("")
+          : currentData.rows.map((r, i) => {
+              const signStr = r.inAmt > 0 ? `+${r.inAmt.toFixed(2)}` : `-${r.outAmt.toFixed(2)}`;
+              return `<div class="raw-item"><span class="raw-coord">Y:${740 - i * 42}</span>${r.date}  ${r.summary}  ${signStr}  余额:${r.bal.toFixed(2)}</div>`;
+            }).join("");
+        document.getElementById("rawTextBox").innerHTML = `<div style="padding-bottom:8px; margin-bottom:8px; border-bottom:1px solid #E4E4E7; font-weight:600; color:#18181B;">${currentData.rawHeader}</div>${rawList || '<div style="color:var(--text-muted); padding:16px 0;">未检测到文本层内容（可能为扫描图片型 PDF）</div>'}`;
+      }
 
       let totalIn = 0, totalOut = 0, inCount = 0, outCount = 0, anomalyCount = 0;
       currentData.rows.forEach(r => {
@@ -830,30 +787,43 @@
       });
       const net = totalIn - totalOut;
 
-      document.getElementById("statTotalIn").textContent = `+${formatMoney(totalIn)}`;
+      const statInEl = document.getElementById("statTotalIn");
+      const statOutEl = document.getElementById("statTotalOut");
+      statInEl.className = hasRows ? "metric-v num-in" : "metric-v";
+      statOutEl.className = hasRows ? "metric-v num-out" : "metric-v";
+      statInEl.textContent = hasRows ? `+${formatMoney(totalIn)}` : "0.00";
       document.getElementById("statInCount").textContent = `${inCount} 笔收入记录`;
-      document.getElementById("statTotalOut").textContent = `-${formatMoney(totalOut)}`;
+      statOutEl.textContent = hasRows ? `-${formatMoney(totalOut)}` : "0.00";
       document.getElementById("statOutCount").textContent = `${outCount} 笔支出记录`;
-      document.getElementById("statNet").textContent = `${net >= 0 ? "+" : "-"}${formatMoney(Math.abs(net))}`;
+      document.getElementById("statNet").textContent = hasRows ? `${net >= 0 ? "+" : "-"}${formatMoney(Math.abs(net))}` : "0.00";
       document.getElementById("statTotalRows").textContent = `${currentData.rows.length}`;
-      document.getElementById("statSourceTitle").textContent = currentData.title;
+      document.getElementById("statSourceTitle").textContent = hasFile ? currentData.title : "等待导入 PDF 文件";
 
-      if (currentData.rows.length > 0) {
+      if (hasRows) {
         const firstD = currentData.rows[0].date.slice(0, 10);
         const lastD = currentData.rows[currentData.rows.length - 1].date.slice(0, 10);
         document.getElementById("statPeriod").textContent = `${firstD} 至 ${lastD}`;
+      } else {
+        document.getElementById("statPeriod").textContent = "暂未导入流水";
       }
 
       const auditEl = document.getElementById("statAuditStatus");
       const auditDesc = document.getElementById("statAuditDesc");
-      if (anomalyCount === 0) {
+      if (!hasRows) {
+        auditEl.className = "metric-v";
+        auditEl.style.color = "var(--text-muted)";
+        auditEl.textContent = "等待导入核验";
+        auditDesc.textContent = "导入后自动校验：上期余额 + 收入 - 支出 = 本期余额";
+      } else if (anomalyCount === 0) {
+        auditEl.style.color = "";
         auditEl.className = "metric-v audit-ok";
         auditEl.textContent = "全部校验连续";
         auditDesc.textContent = "上期余额 + 收入 - 支出 = 本期余额";
       } else {
+        auditEl.style.color = "";
         auditEl.className = "metric-v audit-err";
         auditEl.textContent = `发现 ${anomalyCount} 处余额断层`;
-        auditDesc.textContent = "表格已标红差额行，疑似漏页或错记";
+        auditDesc.textContent = "表格已标红差额行，请核对是否存在漏页或跨页断层";
       }
 
       renderTable();
@@ -877,8 +847,28 @@
     }
 
     function renderTable() {
-      const rows = getFilteredRows();
       const tbody = document.getElementById("tableBody");
+      if (!currentData.rows || currentData.rows.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align:center; padding:72px 20px; color:var(--text-muted); font-size:13px;">
+              暂无流水明细数据，请先在上方选择或拖入银行流水 PDF 文件
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      const rows = getFilteredRows();
+      if (rows.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align:center; padding:48px 20px; color:var(--text-muted); font-size:13px;">
+              当前筛选条件下无匹配记录
+            </td>
+          </tr>
+        `;
+        return;
+      }
       tbody.innerHTML = rows.map((r, i) => `
         <tr class="${r.anomaly ? 'row-anomaly' : ''}">
           <td class="mono" style="color:var(--text-muted);">${String(i + 1).padStart(2, '0')}</td>
@@ -934,6 +924,7 @@
       try {
         const arrayBuffer = await file.arrayBuffer();
         let extractedLines = [];
+        let rawLineObjects = [];
         let pageCount = 1;
 
         if (window.pdfjsLib) {
@@ -960,34 +951,43 @@
             buckets.sort((a, b) => b.y - a.y);
             buckets.forEach(b => {
               b.items.sort((a, b) => a.x - b.x);
-              extractedLines.push(b.items.map(i => i.str).join("  "));
+              const lineStr = b.items.map(i => i.str).join("  ");
+              extractedLines.push(lineStr);
+              rawLineObjects.push({ page: p, y: b.y, text: lineStr });
             });
           }
         } else {
           const dec = new TextDecoder("utf-8", { fatal: false }).decode(arrayBuffer);
-          extractedLines = dec.split(/\r?\n/).filter(l => /202\d[-/.]\d{1,2}[-/.]\d{1,2}/.test(l));
+          extractedLines = dec.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+          rawLineObjects = extractedLines.map((l, idx) => ({ page: 1, y: 800 - idx * 18, text: l }));
         }
 
         const parsedRows = [];
-        const dateRegex = /(20\d{2}[-/.年]\d{1,2}[-/.月]\d{1,2}日?(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?)/;
-        const numRegex = /([+-]?\d{1,3}(?:,\d{3})*(?:\.\d{2})|[+-]?\d+\.\d{2})/g;
+        const dateRegex = /((?:20\d{2}|19\d{2})[-/.年]\d{1,2}[-/.月]\d{1,2}日?(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?|(?:20\d{2})(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))/;
+        const numRegex = /([+-]?\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|[+-]?\d+\.\d{1,2})/g;
 
         extractedLines.forEach(line => {
           const dm = line.match(dateRegex);
           if (!dm) return;
-          const nums = (line.replace(dm[1], "").match(numRegex) || []).map(s => parseFloat(s.replace(/,/g, "")));
-          if (nums.length >= 2) {
-            const bal = Math.abs(nums[nums.length - 1]);
+          const rest = line.replace(dm[1], " ");
+          const matches = rest.match(numRegex) || [];
+          const nums = matches.map(s => parseFloat(s.replace(/,/g, ""))).filter(n => !isNaN(n));
+          if (nums.length >= 1) {
+            const bal = nums.length >= 2 ? Math.abs(nums[nums.length - 1]) : 0;
             const amt = nums[0];
-            const isOut = /支出|消费|扣款|转出|代扣|-/.test(line) && !/转入|汇入|代发|\+/.test(line);
+            const isOut = /支出|消费|扣款|转出|代扣|付款|借|-/.test(line) && !/转入|汇入|代发|收入|贷|\+/.test(line);
             const inAmt = (!isOut && amt > 0) ? Math.abs(amt) : 0;
             const outAmt = (isOut || amt < 0) ? Math.abs(amt) : 0;
-            const cleanText = line.replace(dm[1], "").replace(numRegex, "").replace(/\s+/g, " ").trim();
+            const cleanText = rest.replace(numRegex, " ").replace(/\s+/g, " ").trim();
             const parts = cleanText.split(" ").filter(Boolean);
             const summary = parts.slice(0, 2).join("-") || "银行卡交易明细";
-            const peer = parts.slice(2).join(" ") || "交易对手方账户";
+            const peer = parts.slice(2).join(" ") || "-";
+            let normDate = dm[1].replace(/[年月/.]/g, "-").replace(/日/g, "");
+            if (/^\d{8}$/.test(normDate)) {
+              normDate = `${normDate.slice(0,4)}-${normDate.slice(4,6)}-${normDate.slice(6,8)}`;
+            }
             parsedRows.push({
-              date: dm[1].replace(/[年月]/g, "-").replace(/日/g, ""),
+              date: normDate,
               summary,
               cat: guessCategory(cleanText),
               inAmt,
@@ -998,19 +998,18 @@
           }
         });
 
-        if (parsedRows.length === 0) {
-          alert("已读取 PDF，未检测到标准文本型日期与金额列（可能为纯扫描图像）。已加载招行演示数据供参考。");
-          loadSample("cmb");
-          return;
-        }
-
         currentData = {
           title: file.name,
           pages: `共 ${pageCount} 页`,
-          rawHeader: `文件：${file.name} (${(file.size / 1024).toFixed(1)} KB) | 本地 Y 坐标聚类解析`,
-          rows: auditRows(parsedRows)
+          rawHeader: `文件：${file.name} (${(file.size / 1024).toFixed(1)} KB) | 提取文本 ${rawLineObjects.length} 行`,
+          rows: auditRows(parsedRows),
+          rawLines: rawLineObjects
         };
         renderAll();
+
+        if (parsedRows.length === 0) {
+          alert("已读取 PDF 文件，但未识别到包含标准日期与金额的交易明细行（若为扫描件图片型 PDF，需先使用电子原件导出）。左侧已展示提取到的原始文本层供核对。");
+        }
       } catch (err) {
         alert("解析提示：" + err.message);
       }
@@ -1029,9 +1028,13 @@
     }
 
     function exportFile(type) {
+      if (!currentData.rows || currentData.rows.length === 0) {
+        alert("当前暂无流水明细数据，请先在上方选择或拖入银行流水 PDF 文件后再导出。");
+        return;
+      }
       if (!checkAndConsumeQuota()) return;
       const rows = getFilteredRows();
-      const baseName = currentData.title.replace(/\.pdf$/i, "") + "_结构化明细";
+      const baseName = (currentData.title || "银行流水").replace(/\.pdf$/i, "") + "_结构化明细";
 
       if (type === "csv") {
         const headers = ["序号", "交易日期", "交易摘要", "科目分类", "收入金额(元)", "支出金额(元)", "账户余额(元)", "对方户名/账号", "余额勾稽核验"];
@@ -1087,7 +1090,7 @@
     }
 
     updateQuotaUI();
-    loadSample("cmb");
+    renderAll();
   </script>
 </body>
 </html>
